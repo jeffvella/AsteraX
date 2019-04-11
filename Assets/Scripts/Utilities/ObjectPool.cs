@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -69,22 +70,33 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
     private readonly Action<T> _initializer;
     private readonly IPoolObserver<T> _observer;
 
+    public int Count => AvailableCount + ActiveCount;
+    public int AvailableCount => _available.Count;
+    public int ActiveCount => _active.Count;
+
+    public T[] ToActiveArray() => _active.Values.ToArray();
+
     public ObjectPool(GameObject prefab, GameObject parent, int startingSize, IPoolObserver<T> observer = null)
     {
         _prefab = prefab;
         _parent = parent;
         _observer = observer;
-
-        CacheItems(startingSize);
+        Expand(startingSize);
     }
+
 
     /// <summary>
     /// Warms up the pool, creating many items in advance so that they can be spawned later without initialization overheads.
     /// </summary>
-    /// <param name="count">how many items to create</param>
-    private void CacheItems(int count)
+    /// <param name="newItemCount">how many items to create</param>
+    public void Expand(int newItemCount = default)
     {
-        for (int i = 0; i < count; i++)
+        if (newItemCount <= 0)
+        {
+            newItemCount = DefaultExpandAmount();
+        }
+
+        for (int i = 0; i < newItemCount; i++)
         {
             GameObject go = Object.Instantiate(_prefab, Vector3.zero, Quaternion.identity);
             go.SetActive(false);
@@ -99,6 +111,11 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
         }
     }
 
+    private int DefaultExpandAmount()
+    {
+        return Math.Max(5, _active.Count / 2);
+    }
+
     /// <summary>
     /// Instantiates a pooled GameObject
     /// </summary>
@@ -107,7 +124,7 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
     /// <param name="rotation">The starting rotation</param>
     /// <param name="scale">The starting scale</param>
     /// <returns>an instantiated game object</returns>
-    public T Spawn(GameObject prefab, Vector3 position, Quaternion rotation, Vector3 scale = default)
+    public T Spawn(Vector3 position, Quaternion rotation, Vector3 scale = default)
     {
         if (_available.Count == 0)
         {
@@ -128,12 +145,6 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
         t.OnSpawned(this);
         _observer?.OnItemSpawned(this, t);
         return t;
-    }
-
-    private void Expand()
-    {
-        var growAmount = Math.Max(5, _active.Count / 2);
-        CacheItems(growAmount);
     }
 
     /// <summary>

@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22cbf75b4cdf2aa4ba83b44121106c0e, type: 3}
-  m_Name: BulletData
+  m_Script: {fileID: 11500000, guid: 3494c93bd5ebcdf4fa4b66f85580204a, type: 3}
+  m_Name: TestData
   m_EditorClassIdentifier: 
-  BulletPrefab: {fileID: 1657914042213664, guid: 0e9c239fd33d94404b671bc44ab4f6b4,
+  GameControllerPrefab: {fileID: 7928786072606330715, guid: 287441a18f2e65c4191f041a9c096d1c,
     type: 3}
-  Speed: 20
-  Duration: 2
+  TestScenePrefab: {fileID: 8335624397076234302, guid: 580c2dbc6760c7f4e9894f8c132c5e6e,
+    type: 3}

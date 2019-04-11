@@ -16,17 +16,16 @@ public class BulletManager : MonoBehaviour, IPoolObserver<Bullet>
     [Header("Setup")]
     public GameObject ParentContainer;
     public BulletData BulletData;
-    public int StartingPoolSize = 10;
     private ObjectPool<Bullet> _pool;
 
     void Awake()
     {
-        _pool = new ObjectPool<Bullet>(BulletData.BulletPrefab, ParentContainer, StartingPoolSize, this);
+        _pool = new ObjectPool<Bullet>(BulletData.BulletPrefab, ParentContainer, BulletData.StartingPoolSize, this);
     }
 
     public Bullet SpawnBullet(Vector3 position, Quaternion rotation)
     {       
-        return _pool.Spawn(BulletData.BulletPrefab, position, rotation);
+        return _pool.Spawn(position, rotation);
     }
 
     public void OnItemCreated(IObjectPool<Bullet> pool, Bullet item)

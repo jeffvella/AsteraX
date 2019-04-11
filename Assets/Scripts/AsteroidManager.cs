@@ -12,17 +12,21 @@ using Random = System.Random;
 /// <summary>
 /// Responsible for spawning and keeping track of asteroids.
 /// </summary>
-public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
+public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerable<Asteroid>, IExposedBehavior
 {
     [Header("Setup")]
     public GameObject ParentContainer;
     public AsteroidData AsteroidData;
     private Dictionary<int, ObjectPool<Asteroid>> _pools;
-    public int StartingPoolSize = 10;
+
+    public AsteroidManager()
+    {
+        _pools = new Dictionary<int, ObjectPool<Asteroid>>();
+    }
 
     void Awake()
     {
-        _pools = new Dictionary<int, ObjectPool<Asteroid>>();
+
     }
 
     public Asteroid SpawnAsteroid(int maxSize = int.MaxValue, Vector3 position = default, Vector3 velocity = default, Quaternion rotation = default)
@@ -32,7 +36,7 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
 
         var pos = GetRandomPosition(position);
         var rot = UnityEngine.Random.rotation;
-        var asteroid = pool.Spawn(prefab, pos, rot);
+        var asteroid = pool.Spawn(pos, rot);
 
         var type = GetRandomAsteroidType(maxSize);
         asteroid.Type = type;
@@ -41,42 +45,9 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
         asteroid.AngularVelocity = CreateAsteroidRotationalVelocity();
         asteroid.MoveDirection = GetAsteroidMoveDirection(velocity).Forward;
 
-        GameplayArea.TryMoveInsideBounds(asteroid.gameObject);
+        Game.Wrap.TryMoveInsideBounds(asteroid.gameObject);
 
         return asteroid;
-    }
-
-    public Asteroid SpawnAsteroid(Asteroid parent)
-    {
-        return SpawnAsteroid(parent.Type.Size-1, parent.transform.position, parent.MoveDirection);
-    }
-
-    public const float OnSplitInheritParentMomentumFraction = 0.35f;
-
-    private (Vector3 Forward, Vector3 Up) GetAsteroidMoveDirection(Vector3 parentVelocity = default)
-    {
-        Quaternion yAxisRotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0,360), Vector3.up);
-
-        // Point children vaguely in the same direction of their parent.
-        var rot = parentVelocity != default 
-            ? Quaternion.Slerp(Quaternion.LookRotation(parentVelocity), yAxisRotation, OnSplitInheritParentMomentumFraction) 
-            : yAxisRotation;
-
-        Vector3 forward = rot * Vector3.forward;
-        Vector3 up = rot * Vector3.up;
-        return (forward.normalized, up.normalized);
-    }
-
-    private ObjectPool<Asteroid> GetPoolForPrefab(GameObject prefab)
-    {
-        var prefabId = prefab.GetInstanceID();
-        if (!_pools.ContainsKey(prefabId))
-        {
-            var pool = new ObjectPool<Asteroid>(prefab, ParentContainer, StartingPoolSize, this);
-            _pools[prefabId] = pool;
-            return pool;
-        }
-        return _pools[prefabId];
     }
 
     private GameObject GetRandomAsteroidPrefab()
@@ -86,34 +57,43 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
         return prefab;
     }
 
-    private AsteroidType GetRandomAsteroidType(int maxSize)
+    private ObjectPool<Asteroid> GetPoolForPrefab(GameObject prefab)
     {
-        AsteroidType[] types = AsteroidData.AsteroidTypes.Where(t => t.Size <= maxSize).ToArray();
-        var randomIndex = UnityEngine.Random.Range(0, types.Length);
-        if (randomIndex < 0 || randomIndex >= types.Length)
+        var prefabId = prefab.GetInstanceID();
+        if (!_pools.ContainsKey(prefabId))
         {
-            Debug.Log($"Invalid range {randomIndex} range=0-{types.Length-1}");
+            var pool = new ObjectPool<Asteroid>(prefab, ParentContainer, AsteroidData.StartingPoolSize, this);
+            _pools[prefabId] = pool;
+            return pool;
         }
-        var type = types.ElementAtOrDefault(randomIndex);
-        return type;
+        return _pools[prefabId];
     }
 
     private Vector3 GetRandomPosition(Vector3 position)
     {
         if (position == Vector3.zero)
         {
-            position = GameplayArea.RandomPointInBounds();
+            position = Game.Wrap.RandomPointInBounds();
         }
-        position.y = GameplayArea.GetBounds().center.y;
+        position.y = Game.Wrap.Bounds.center.y;
         return position;
     }
 
-    private Quaternion CreateAsteroidRotationalVelocity()
+    private AsteroidType GetRandomAsteroidType(int maxSize)
     {
-        var x = UnityEngine.Random.Range(AsteroidData.MinRotationSpeed, AsteroidData.MaxRotationSpeed);
-        var y = UnityEngine.Random.Range(AsteroidData.MinRotationSpeed, AsteroidData.MaxRotationSpeed);
-        var z = UnityEngine.Random.Range(AsteroidData.MinRotationSpeed, AsteroidData.MaxRotationSpeed);
-        return Quaternion.Euler(x, y, z);      
+        AsteroidType[] types = AsteroidData.AsteroidTypes.Where(t => t.Size <= maxSize).ToArray();
+        var randomIndex = UnityEngine.Random.Range(0, types.Length);
+        if (randomIndex < 0 || randomIndex >= types.Length)
+        {
+            Debug.Log($"Invalid range {randomIndex} range=0-{types.Length - 1}");
+        }
+        var type = types.ElementAtOrDefault(randomIndex);
+        return type;
+    }
+
+    public Asteroid SpawnAsteroid(Asteroid parent)
+    {
+        return SpawnAsteroid(parent.Type.Size-1, parent.transform.position, parent.MoveDirection);
     }
 
     private float GetAsteroidMovementSpeed()
@@ -121,6 +101,29 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
         return UnityEngine.Random.Range(AsteroidData.MinMoveSpeed, AsteroidData.MaxMoveSpeed);
     }
 
+    private Quaternion CreateAsteroidRotationalVelocity()
+    {
+        var x = UnityEngine.Random.Range(AsteroidData.MinRotationSpeed, AsteroidData.MaxRotationSpeed);
+        var y = UnityEngine.Random.Range(AsteroidData.MinRotationSpeed, AsteroidData.MaxRotationSpeed);
+        var z = UnityEngine.Random.Range(AsteroidData.MinRotationSpeed, AsteroidData.MaxRotationSpeed);
+        return Quaternion.Euler(x, y, z);
+    }
+
+    private (Vector3 Forward, Vector3 Up) GetAsteroidMoveDirection(Vector3 parentVelocity = default)
+    {
+        const float inheritParentMomentumFraction = 0.35f;
+
+        Quaternion yAxisRotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0,360), Vector3.up);
+
+        // Point children vaguely in the same direction of their parent.
+        var rot = parentVelocity != default 
+            ? Quaternion.Slerp(Quaternion.LookRotation(parentVelocity), yAxisRotation, inheritParentMomentumFraction) 
+            : yAxisRotation;
+
+        Vector3 forward = rot * Vector3.forward;
+        Vector3 up = rot * Vector3.up;
+        return (forward.normalized, up.normalized);
+    }
 
     void IPoolObserver<Asteroid>.OnItemCreated(IObjectPool<Asteroid> pool, Asteroid asteroid)
     {
@@ -134,6 +137,11 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
 
     void IPoolObserver<Asteroid>.OnItemDespawned(IObjectPool<Asteroid> pool, Asteroid asteroid)
     {
+        SpawnChildAsteroids(asteroid);
+    }
+
+    private void SpawnChildAsteroids(Asteroid asteroid)
+    {
         if (asteroid.Type.Size > 1)
         {
             for (int i = 0; i < asteroid.Type.Children; i++)
@@ -143,6 +151,21 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>
         }
     }
 
+    public IEnumerator<Asteroid> GetEnumerator()
+    {
+        foreach (var pool in _pools.Values)
+        {                        
+            var active = pool.ToActiveArray();
+            for (int j = 0; j < active.Length; j++)
+            {
+                yield return active[j];
+            }
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    void IExposedBehavior.Awake() => Awake();
+    void IExposedBehavior.Update() { }
 }
 
 

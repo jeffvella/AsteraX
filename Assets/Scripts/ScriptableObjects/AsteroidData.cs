@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
 [Serializable]
-public struct AsteroidType
+public class AsteroidType
 {
     public int Points;
     public int Size;
@@ -22,7 +22,7 @@ public class AsteroidData : ScriptableObject
     public float MaxMoveSpeed = 10f;
     public float MinRotationSpeed = 1f;
     public float MaxRotationSpeed = 5f;
-
+    public int StartingPoolSize = 20;
 }
 
 

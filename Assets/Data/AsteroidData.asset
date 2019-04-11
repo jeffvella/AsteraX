@@ -17,13 +17,13 @@ MonoBehaviour:
   - {fileID: 1669921439223048, guid: 5513cde93bb3343768ced35921a9c3c2, type: 3}
   - {fileID: 1317570492134680, guid: a6d3ccfc58a1f41368479aabb6050561, type: 3}
   AsteroidTypes:
-  - Points: 100
+  - Points: 400
     Size: 1
     Children: 3
   - Points: 200
     Size: 2
     Children: 3
-  - Points: 400
+  - Points: 100
     Size: 3
     Children: 3
   MinMoveSpeed: 5

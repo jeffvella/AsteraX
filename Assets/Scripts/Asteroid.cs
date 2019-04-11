@@ -9,6 +9,9 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     public Quaternion AngularVelocity;
     public AsteroidType Type;
     private IObjectPool<Asteroid> _pool;
+    private Collider _collider;
+
+    public Bounds Bounds => _collider.bounds;
 
     void Update()
     {
@@ -16,6 +19,11 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
         transform.rotation = AngularVelocity * transform.rotation;
 
         Debug.DrawLine(transform.position, transform.position + MoveDirection.normalized * 3f);
+    }
+
+    public void Awake()
+    {
+        _collider = GetComponent<Collider>();
     }
 
     public void OnSpawned(IObjectPool<Asteroid> pool)

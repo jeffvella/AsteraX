@@ -5,21 +5,26 @@ using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-[RequireComponent(typeof(BoxCollider))]
-public class GameplayArea : MonoBehaviour
+public class WrapManager : MonoBehaviour, IExposedBehavior
 {
-    private static BoxCollider _collider;
+    //public Bounds Bounds;
+
     private static Bounds _paddedBounds;
     public const float Padding = 0.5f;
 
-    void Awake()
+    public Bounds Bounds => _collider.bounds; 
+
+    public BoxCollider Collider => _collider;
+    private static BoxCollider _collider;
+
+    private void Awake()
     {
-        _collider = GetComponent<BoxCollider>();        
-        _paddedBounds = _collider.bounds;
+        _collider = GetComponent<BoxCollider>();
+        _paddedBounds = Collider.bounds;
         _paddedBounds.Expand(Padding);
     }
 
-    public static Vector3 ClosestPosition(Vector3 position)
+    public Vector3 ClosestPosition(Vector3 position)
     {
         var min = _collider.bounds.min;
         var max = _collider.bounds.max;
@@ -30,16 +35,17 @@ public class GameplayArea : MonoBehaviour
         return closest;     
     }
 
-    public static Vector3 RandomPointInBounds()
+    public Vector3 RandomPointInBounds(float xyInset = 0)
     {
         return new Vector3(
-            Random.Range(_collider.bounds.min.x, _collider.bounds.max.x),
-            Random.Range(_collider.bounds.min.y, _collider.bounds.max.y),
-            Random.Range(_collider.bounds.min.z, _collider.bounds.max.z)
+            Random.Range(_collider.bounds.min.x + xyInset, _collider.bounds.max.x - xyInset),
+            _collider.center.y, //Random.Range(_collider.bounds.min.y, _collider.bounds.max.y),
+            Random.Range(_collider.bounds.min.z + xyInset, _collider.bounds.max.z - xyInset)
         );
     }
 
-    public static bool TryMoveInsideBounds(GameObject go)
+
+    public bool TryMoveInsideBounds(GameObject go)
     {
         if (_collider.bounds.Contains(go.transform.position))
             return false;
@@ -54,7 +60,7 @@ public class GameplayArea : MonoBehaviour
         return false;
     }
 
-    public static Vector3 GetReEntryPosition(Vector3 position, Bounds bounds)
+    public Vector3 GetReEntryPosition(Vector3 position, Bounds bounds)
     {
         var pointOnBounds = _paddedBounds.ClosestPoint(position);
         
@@ -81,28 +87,11 @@ public class GameplayArea : MonoBehaviour
             result.x -= size.x;
         }
 
-        //if (position.z <= _collider.bounds.min.z)
-        //{
-        //    result.z += size.z;
-        //}
-        //else if (position.z > _collider.bounds.max.z)
-        //{
-        //    result.z -= size.z ;
-        //}
-        //if (position.x <= _collider.bounds.min.x)
-        //{
-        //    result.x += size.x;
-        //}
-        //else if (position.x > _collider.bounds.max.x)
-        //{
-        //    result.x -= size.x;
-        //}
-
         Debug.DrawLine(pointOnBounds, result + Vector3.zero * 0.1f, Color.yellow);
         return result;
     }
 
-    public static Vector3 GetFlippedReEntryPosition(Vector3 position)
+    public Vector3 GetFlippedReEntryPosition(Vector3 position)
     {        
         var pointOnBounds = _collider.ClosestPointOnBounds(position);
         var size = _collider.bounds.extents * 2;
@@ -133,10 +122,19 @@ public class GameplayArea : MonoBehaviour
         return result;
     }
 
-    public static Bounds GetBounds()
+    public bool Contains(Bounds b, float inset = 0)
     {
-        return _collider.bounds;
+        var a = _collider.bounds;
+        var result = b.min.x >= a.min.x + inset && b.max.x <= a.max.x - inset &&
+                     b.min.y >= a.min.y + inset && b.max.y <= a.max.y - inset &&
+                     b.min.z >= a.min.z + inset && b.max.z <= a.max.z - inset;
+
+        //DebugExtension.DebugBounds(b, result ? Color.blue : Color.cyan);
+        return result;
     }
+
+    void IExposedBehavior.Awake() => Awake();
+    void IExposedBehavior.Update() { }
 }
 
 

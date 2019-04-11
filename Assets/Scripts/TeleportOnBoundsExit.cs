@@ -17,7 +17,7 @@ public class TeleportOnBoundsExit : MonoBehaviour
     {
         //GetComponent<Asteroid>()?.Despawn(); // debug asteroids exploding on border
 
-        transform.position = GameplayArea.GetReEntryPosition(transform.position, _collider.bounds);       
+        transform.position = Game.Wrap.GetReEntryPosition(transform.position, _collider.bounds);       
     }
 
 }
