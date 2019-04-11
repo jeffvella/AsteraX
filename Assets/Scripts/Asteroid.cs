@@ -10,13 +10,18 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     public AsteroidType Type;
     private IObjectPool<Asteroid> _pool;
     private Collider _collider;
+    private Rigidbody _rigidBody;
 
     public Bounds Bounds => _collider.bounds;
 
     void Update()
     {
-        transform.position += MoveDirection * MovementSpeed * Time.deltaTime;
-        transform.rotation = AngularVelocity * transform.rotation;
+
+        //transform.position += MoveDirection * MovementSpeed * Time.deltaTime;
+        //transform.rotation = AngularVelocity * transform.rotation;
+
+        _rigidBody.MoveRotation(AngularVelocity * _rigidBody.rotation);
+        _rigidBody.MovePosition(_rigidBody.position + MoveDirection * MovementSpeed * Time.deltaTime);
 
         Debug.DrawLine(transform.position, transform.position + MoveDirection.normalized * 3f);
     }
@@ -24,6 +29,7 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     public void Awake()
     {
         _collider = GetComponent<Collider>();
+        _rigidBody = GetComponent<Rigidbody>();
     }
 
     public void OnSpawned(IObjectPool<Asteroid> pool)

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Events;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Debug = System.Diagnostics.Debug;
+using Debug = UnityEngine.Debug;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -22,9 +23,9 @@ public class PlayerManager : MonoBehaviour
 
     private List<Vector3> _spawnPositions;
 
-    public void Awake()
+    private void Awake()
     {
-
+        PlayerData.ShipData.DestroyedEvent.Register(OnShipDestroyed);
     }
 
     public ShipController SpawnShip()
@@ -35,12 +36,17 @@ public class PlayerManager : MonoBehaviour
         }
 
         var spawnPosition = GetSafeSpiralSpawnPosition(); // GetExpandScanSafeSpawnPosition();
-        _ship = Instantiate(PlayerData.ShipType.ShipPrefab, spawnPosition, Quaternion.identity);
+        _ship = Instantiate(PlayerData.ShipData.ShipPrefab, spawnPosition, Quaternion.identity);
         _shipController = _ship.GetComponent<ShipController>();
-        _shipController.ShipType = PlayerData.ShipType;
+        _shipController.ShipData = PlayerData.ShipData;
         _shipController.SetState(ShipState.Alive);
 
-        return _shipController ?? throw new InvalidOperationException("Player ship prefab must have a ship controller attached");
+        return _shipController;
+    }
+
+    private void OnShipDestroyed(ShipStateChangedEventInfo info, ShipStatusEventArgument status)
+    {
+        SpawnShip();
     }
 
     /// <summary>

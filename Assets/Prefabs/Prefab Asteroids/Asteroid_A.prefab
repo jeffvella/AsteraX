@@ -130,6 +130,7 @@ MonoBehaviour:
   Type:
     Points: 0
     Size: 0
+    Children: 0
 --- !u!114 &1864435300082466965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,8 +155,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a665e071dd544f448a99030521b3f62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowBoundingBox: 1
-  ShowActualBox: 0
+  ShowAABB: 1
+  ShowOBB: 1
   ShowDuringPlay: 1
   ShowInEditor: 1
   BoundingBoxColor: {r: 0, g: 0, b: 0, a: 1}

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Events;
 using UnityEditor;
 using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.Experimental.XR;
 using UnityEngine.UIElements;
 using UnityStandardAssets.CrossPlatformInput;
@@ -33,8 +35,9 @@ public class ShipController : MonoBehaviour
     private ShipStatus _status;
     private Vector3 _direction;
     private Collider _collider;
+    private Rigidbody _rigidBody;
 
-    public ShipType ShipType { get; set; }
+    public ShipData ShipData { get; set; }
 
     public bool IsStateTransitioning { get; private set; }
 
@@ -42,6 +45,7 @@ public class ShipController : MonoBehaviour
 
     void Awake()
     {
+        _rigidBody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
         SetState(ShipState.Awake);
     }
@@ -49,7 +53,6 @@ public class ShipController : MonoBehaviour
     void Update()
     {        
         RotateTurretToMousePosition();
-        MoveShipFromInput();
         FireWhenButtonDown();
         TiltForwardsWhenMoving();
     }
@@ -64,20 +67,21 @@ public class ShipController : MonoBehaviour
 
     private void MoveShipFromInput()
     {
-        var horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-        var vertical = CrossPlatformInputManager.GetAxis("Vertical");
+        var leftRight = CrossPlatformInputManager.GetAxis("Horizontal");
+        var upDown = CrossPlatformInputManager.GetAxis("Vertical");
 
         // Camera view is from top down, ship moves on XY plane.
-        _direction = Vector3.ClampMagnitude(new Vector3(horizontal, 0, vertical),1);
+        // clamp limits excess velocity on diagonal axes.
+        _direction = Vector3.ClampMagnitude(new Vector3(leftRight, 0, upDown),1);
 
-        // limits excess velocity on diagonal axes.
-        transform.position += _direction * ShipType.MaxSpeed * Time.deltaTime;
+        transform.position += _direction * ShipData.MaxSpeed * Time.deltaTime;
+        //_rigidBody.MovePosition(_rigidBody.position + _direction * ShipData.MaxSpeed * Time.deltaTime);
     }
 
     private void TiltForwardsWhenMoving()
     {
         var axis = Vector3.Cross(_direction.normalized, -transform.up);
-        var tilt = Quaternion.AngleAxis(ShipType.TiltDegrees, axis);
+        var tilt = Quaternion.AngleAxis(ShipData.TiltDegrees, axis);
         TiltTransform.rotation = Quaternion.Slerp(transform.rotation, tilt, _direction.magnitude);
     }
 
@@ -90,6 +94,14 @@ public class ShipController : MonoBehaviour
         TurretRotator.LookAt(new Vector3(mouseWorldPosition.x, transform.position.y, mouseWorldPosition.z));
     }
 
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.GetComponent<Asteroid>() is Asteroid asteroid)
+        {
+            ApplyDamage(asteroid.Type.CollisionDamage); 
+        }        
+    }
+
     public void ApplyDamage(float amount)
     {
         _status.Health = Math.Max(0, _status.Health - amount);
@@ -98,6 +110,11 @@ public class ShipController : MonoBehaviour
         {
             SetState(ShipState.Dead);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        MoveShipFromInput();
     }
 
     public void SetState(ShipState state)
@@ -128,12 +145,14 @@ public class ShipController : MonoBehaviour
 
     private void SpawnSequence()
     {
-        _status.Health = ShipType.StartingHealth;
+        _status.Health = ShipData.StartingHealth;
     }
 
     private void DeathSequence()
     {
         Destroy(gameObject);
+
+        ShipData.DestroyedEvent.Raise(new ShipStatusEventArgument(GetInstanceID(), _status));
     }
 }
 

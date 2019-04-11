@@ -5,17 +5,15 @@ using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-public class WrapManager : MonoBehaviour, IExposedBehavior
+public class WrapManager : MonoBehaviour
 {
-    //public Bounds Bounds;
-
     private static Bounds _paddedBounds;
+    private static BoxCollider _collider;
     public const float Padding = 0.5f;
 
     public Bounds Bounds => _collider.bounds; 
 
     public BoxCollider Collider => _collider;
-    private static BoxCollider _collider;
 
     private void Awake()
     {
@@ -132,9 +130,6 @@ public class WrapManager : MonoBehaviour, IExposedBehavior
         //DebugExtension.DebugBounds(b, result ? Color.blue : Color.cyan);
         return result;
     }
-
-    void IExposedBehavior.Awake() => Awake();
-    void IExposedBehavior.Update() { }
 }
 
 

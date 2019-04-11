@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87d420c50c4cd3a4c9a6b184ebefca17, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  ShipType:
+  ShipData:
     ShipPrefab: {fileID: 1664251521892296, guid: 2c350f2ea6d36435b8b50bf6e3c429cb,
       type: 3}
     MaxSpeed: 10
     TiltDegrees: 15
     StartingHealth: 1
-    Lives: 3
+    DestroyedEvent: {fileID: 11400000, guid: b0439a4a788c3b345a9767c0662fba22, type: 2}
+  Lives: 3

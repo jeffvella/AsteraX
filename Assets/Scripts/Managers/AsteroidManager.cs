@@ -12,7 +12,7 @@ using Random = System.Random;
 /// <summary>
 /// Responsible for spawning and keeping track of asteroids.
 /// </summary>
-public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerable<Asteroid>, IExposedBehavior
+public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerable<Asteroid>
 {
     [Header("Setup")]
     public GameObject ParentContainer;
@@ -164,8 +164,6 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    void IExposedBehavior.Awake() => Awake();
-    void IExposedBehavior.Update() { }
 }
 
 

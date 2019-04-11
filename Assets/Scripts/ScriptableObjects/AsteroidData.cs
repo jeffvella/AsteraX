@@ -8,9 +8,10 @@ using UnityEngine.SocialPlatforms;
 [Serializable]
 public class AsteroidType
 {
-    public int Points;
-    public int Size;
-    public float Children;
+    public int Points = 100;
+    public int Size  = 1;
+    public float Children = 3;
+    public float CollisionDamage = 1;
 }
 
 [CreateAssetMenu]
