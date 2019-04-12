@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Utilities;
+using Events;
 using JetBrains.Annotations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -24,10 +26,22 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
         _pools = new Dictionary<int, ObjectPool<Asteroid>>();
     }
 
+    public int ActiveCount => _pools.Sum(p => p.Value.ActiveCount);
+
     void Awake()
     {
-
+        Game.Events.OnBulletAsteroidCollision.Register(OnBulletAsteroidCollision);
     }
+
+    private void OnBulletAsteroidCollision((Asteroid Asteroid, Bullet Bullet) obj)
+    {
+        SpawnChildAsteroids(obj.Asteroid);
+    }
+
+    //private void OnBulletAsteroidCollision(CollisionArgs<Asteroid, Bullet> args)
+    //{
+    //    SpawnChildAsteroids(args.Source);
+    //}
 
     public Asteroid SpawnAsteroid(int maxSize = int.MaxValue, Vector3 position = default, Vector3 velocity = default, Quaternion rotation = default)
     {
@@ -137,7 +151,7 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
 
     void IPoolObserver<Asteroid>.OnItemDespawned(IObjectPool<Asteroid> pool, Asteroid asteroid)
     {
-        SpawnChildAsteroids(asteroid);
+        //SpawnChildAsteroids(asteroid);
     }
 
     private void SpawnChildAsteroids(Asteroid asteroid)
@@ -164,6 +178,17 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public void Clear()
+    {
+        foreach (var pool in _pools)
+        {
+            foreach (var item in pool.Value.ToActiveArray())
+            {
+                item.Despawn();
+            }
+        }
+    }
 }
 
 

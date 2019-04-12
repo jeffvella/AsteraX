@@ -5,15 +5,12 @@ using UnityEngine;
 
 namespace Events
 {
-    [CreateAssetMenu(menuName = "Events/" + nameof(ShipStateChangedEvent))]
-    public class ShipStateChangedEvent : GameEventBase<ShipStateChangedEventInfo, ShipStatusEventArgument>
-    {
+    [CreateAssetMenu(menuName = "Events/" + nameof(ShipStateChangedEvent), fileName = nameof(ShipStateChangedEvent))]
+    public class ShipStateChangedEvent : GameEventBase<ShipStateChangedEventInfo, ShipStatusArgs> { }
 
-    }
-
-    public struct ShipStatusEventArgument
+    public struct ShipStatusArgs
     {
-        public ShipStatusEventArgument(int shipInstanceId, ShipController.ShipStatus status)
+        public ShipStatusArgs(int shipInstanceId, ShipController.ShipStatus status)
         {
             GameObjectId = shipInstanceId;
             CurrentStatus = status;

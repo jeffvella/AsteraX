@@ -20,3 +20,5 @@ MonoBehaviour:
     StartingHealth: 1
     DestroyedEvent: {fileID: 11400000, guid: b0439a4a788c3b345a9767c0662fba22, type: 2}
   Lives: 3
+  SessionUpdatedEvent: {fileID: 11400000, guid: af7457233ddc1f141899203556dd8dfe,
+    type: 2}

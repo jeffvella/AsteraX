@@ -43,6 +43,14 @@ public class BulletManager : MonoBehaviour, IPoolObserver<Bullet>
     {
       
     }
+
+    public void Clear()
+    {
+        foreach (var item in _pool.ToActiveArray())
+        {
+            item.Despawn();
+        }        
+    }
 }
 
 

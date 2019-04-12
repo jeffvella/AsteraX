@@ -20,6 +20,7 @@ public enum ShipState
 
 public class ShipController : MonoBehaviour
 {
+
     [Serializable]
     public struct ShipStatus
     {
@@ -152,7 +153,7 @@ public class ShipController : MonoBehaviour
     {
         Destroy(gameObject);
 
-        ShipData.DestroyedEvent.Raise(new ShipStatusEventArgument(GetInstanceID(), _status));
+        ShipData.DestroyedEvent.Raise(new ShipStatusArgs(GetInstanceID(), _status));
     }
 }
 

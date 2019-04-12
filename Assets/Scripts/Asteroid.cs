@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Events;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
@@ -11,6 +12,7 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     private IObjectPool<Asteroid> _pool;
     private Collider _collider;
     private Rigidbody _rigidBody;
+    private bool _isSpawned;
 
     public Bounds Bounds => _collider.bounds;
 
@@ -47,15 +49,17 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
         _pool.Despawn(this);
     }
 
-    public void OnCollisionEnter(Collision col)
+    public void OnCollisionEnter(Collision collision)
     {
-        var bullet = col.transform.GetComponent<Bullet>();
+        var bullet = collision.transform.GetComponent<Bullet>();
         if (bullet != null && bullet.IsValid)
         {
             // The bullet needs to be disabled before spawning child asteroids
             // or any children spawned will immediately collide with it.
             bullet.Despawn();
             Despawn();
+
+            Game.Events.OnBulletAsteroidCollision.Raise((this, bullet));
         }
     }
 }

@@ -20,7 +20,9 @@ public class ShipData
 public class PlayerData : ScriptableObject
 {
     public ShipData ShipData;
-    public int Lives = 3;
+    public int StartingLives = 3;
+    public int StartingScore = 0;
+    public PlayerSessionUpdatedEvent SessionUpdatedEvent;
 }
 
 
