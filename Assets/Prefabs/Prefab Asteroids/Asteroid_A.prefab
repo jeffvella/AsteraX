@@ -131,6 +131,7 @@ MonoBehaviour:
     Points: 0
     Size: 0
     Children: 0
+    CollisionDamage: 1
 --- !u!114 &1864435300082466965
 MonoBehaviour:
   m_ObjectHideFlags: 0

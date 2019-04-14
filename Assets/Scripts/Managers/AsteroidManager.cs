@@ -36,6 +36,17 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
     private void OnBulletAsteroidCollision((Asteroid Asteroid, Bullet Bullet) obj)
     {
         SpawnChildAsteroids(obj.Asteroid);
+        AsteroidExplosionEffects(obj.Asteroid);
+    }
+
+    private void AsteroidExplosionEffects(Asteroid asteroid)
+    {
+        if(!AsteroidData.AsteroidEffects.Any())
+            throw new InvalidOperationException("Asteroid data has no effects assigned");
+
+        var randomEffect = AsteroidData.AsteroidEffects[UnityEngine.Random.Range(0, AsteroidData.AsteroidEffects.Count)];
+        var effect = Instantiate(randomEffect.Prefab, asteroid.transform.position, Quaternion.identity);
+        effect.transform.localScale = asteroid.transform.localScale / asteroid.Type.Size;        
     }
 
     //private void OnBulletAsteroidCollision(CollisionArgs<Asteroid, Bullet> args)

@@ -14,11 +14,18 @@ public class AsteroidType
     public float CollisionDamage = 1;
 }
 
+[Serializable]
+public class ParticleEffect
+{
+    public GameObject Prefab;
+}
+
 [CreateAssetMenu]
 public class AsteroidData : ScriptableObject
 {
     public List<GameObject> AsteroidPrefabs;
     public List<AsteroidType> AsteroidTypes;
+    public List<ParticleEffect> AsteroidEffects;
     public float MinMoveSpeed = 5f;
     public float MaxMoveSpeed = 10f;
     public float MinRotationSpeed = 1f;

@@ -20,13 +20,19 @@ MonoBehaviour:
   - Points: 400
     Size: 1
     Children: 3
+    CollisionDamage: 1
   - Points: 200
     Size: 2
     Children: 3
+    CollisionDamage: 1
   - Points: 100
     Size: 3
     Children: 3
+    CollisionDamage: 1
+  AsteroidEffects:
+  - Prefab: {fileID: 784233752896293612, guid: de92c0948864b5e49b92662ef7a2d036, type: 3}
   MinMoveSpeed: 5
   MaxMoveSpeed: 10
   MinRotationSpeed: 0.5
   MaxRotationSpeed: 2
+  StartingPoolSize: 20
