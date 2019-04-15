@@ -18,6 +18,7 @@ public class ManagerDefinitions
     public AsteroidManager AsteroidManagerPrefab;
     public WrapManager WrapManagerPrefab;
     public InterfaceManager InterfaceManagerPrefab;
+    public EffectsManager EffectsManagerPrefab;
 }
 
 [Serializable]

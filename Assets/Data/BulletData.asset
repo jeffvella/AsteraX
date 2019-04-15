@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BulletPrefab: {fileID: 1657914042213664, guid: 0e9c239fd33d94404b671bc44ab4f6b4,
     type: 3}
+  BulletEffects:
+  - Prefab: {fileID: 1779365027958493270, guid: a551393ceac8c814cb7098a2ece1dfcd,
+      type: 3}
   Speed: 20
   Duration: 2
   StartingPoolSize: 20

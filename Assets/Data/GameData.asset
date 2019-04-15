@@ -23,6 +23,8 @@ MonoBehaviour:
       type: 3}
     InterfaceManagerPrefab: {fileID: 6634068223285659330, guid: 762f8258bdb372145b267b2ce3650068,
       type: 3}
+    EffectsManagerPrefab: {fileID: 7107754283172621323, guid: eb4502bdda471474ca07be7d3a7103c4,
+      type: 3}
   Events:
     OnSessionUpdated: {fileID: 11400000, guid: af7457233ddc1f141899203556dd8dfe, type: 2}
     OnShipDestroyed: {fileID: 11400000, guid: b0439a4a788c3b345a9767c0662fba22, type: 2}

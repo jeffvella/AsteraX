@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using System.Runtime.CompilerServices;
+using Unity.Collections.LowLevel.Unsafe;
 
 /// <summary>
 /// An item that can be pooled.
@@ -20,6 +22,8 @@ public interface IPoolable<out T> where T : Component, IPoolable<T>
     /// Event that fires when an object is returned to the pool and made inactive.
     /// </summary>
     void OnDespawned();
+
+    void Despawn();
 }
 
 /// <summary>
@@ -32,6 +36,8 @@ public interface IObjectPool<in T> where T : Component, IPoolable<T>
     /// Return an object back to the pool to be re-used.
     /// </summary>
     void Despawn(T item);
+
+    int ActiveCount { get; }
 }
 
 /// <summary>
@@ -75,6 +81,13 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
     public int ActiveCount => _active.Count;
 
     public T[] ToActiveArray() => _active.Values.ToArray();
+
+    public T this[int index] => _active[index];
+
+    public bool ContainsKey(int gameObjectInstanceId)
+    {
+        return _active.ContainsKey(gameObjectInstanceId);
+    }
 
     public ObjectPool(GameObject prefab, GameObject parent, int startingSize, IPoolObserver<T> observer = null)
     {

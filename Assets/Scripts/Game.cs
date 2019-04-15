@@ -36,6 +36,7 @@ public class Game : MonoBehaviour
     private BulletManager _bulletManager;
     private WrapManager _wrapManager;
     private InterfaceManager _interfaceManager;
+    private EffectsManager _effectsManager;
 
     // The public statics to instance are for the convenience of shorter access
     // e.g. Game.Player versus Game.Instance.Player.
@@ -50,9 +51,12 @@ public class Game : MonoBehaviour
 
     public static InterfaceManager Interface => _instance._interfaceManager;
 
+    public static EffectsManager Effects => _instance._effectsManager;
+
     public static GameData GameData => _instance._gameData;
 
     public static EventReferences Events => _instance._gameData.Events;
+
 
     private Game()
     {
@@ -62,6 +66,7 @@ public class Game : MonoBehaviour
     private void Awake()
     {
         _interfaceManager = Instantiate(_gameData.Managers.InterfaceManagerPrefab, parent: transform);
+        _effectsManager = Instantiate(_gameData.Managers.EffectsManagerPrefab, parent: transform);
         _wrapManager = Instantiate(_gameData.Managers.WrapManagerPrefab, parent: transform);
         _asteroidManager = Instantiate(_gameData.Managers.AsteroidManagerPrefab, parent: transform);
         _playerManager = Instantiate(_gameData.Managers.PlayerManagerPrefab, parent: transform);
