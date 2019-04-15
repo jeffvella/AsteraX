@@ -62,7 +62,13 @@ public class ShipController : MonoBehaviour
     {
         if (CrossPlatformInputManager.GetButtonUp("Fire1"))
         {
-            Game.Bullets.SpawnBullet(transform.position, TurretRotator.rotation);
+            var bullet = Game.Bullets.SpawnBullet(transform.position, TurretRotator.rotation);
+
+            var randomEffectIndex = UnityEngine.Random.Range(0, Game.Bullets.BulletData.BulletEffects.Count);
+            var randomEffectDefinition = Game.Bullets.BulletData.BulletEffects[randomEffectIndex];
+            var effectInstance = Game.Effects.Spawn(randomEffectDefinition.Prefab, bullet.transform);
+
+            Game.Bullets.LinkDespawn(bullet, effectInstance);   
         }
     }
 

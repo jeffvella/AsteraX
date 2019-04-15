@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Constants
 {
-    public const string ScriptableObjectAssetMenuPath = "Data/";
-    public const string ScriptableObjectAssetMenuBasePath = "Assets/Create/";
-    public const string ScriptableObjectAssetFilePath = "Assets/__Data/";
+    //public const string ScriptableObjectAssetMenuPath = "Data/";
+    //public const string ScriptableObjectAssetMenuBasePath = "Assets/Create/";
+    //public const string ScriptableObjectAssetFilePath = "Assets/__Data/";
 
 }
 

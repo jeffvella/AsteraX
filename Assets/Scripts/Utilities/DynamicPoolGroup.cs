@@ -3,16 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DynamicPool<T> : IPoolObserver<T> where T : Component, IPoolable<T>
+public enum PoolCallbackAction
+{
+    None = 0,
+    Despawn,
+}
+
+
+/// <summary>
+/// A general purpose pool that can spawn manage multiple prefab variants
+/// (as long as they contain the <para>T</para> component).
+/// Does not require that items to be pooled are defined in advance.
+/// </summary>
+/// <typeparam name="T">component shared by objects to be pooled</typeparam>
+public class DynamicPoolGroup<T> : IPoolObserver<T> where T : Component, IPoolable<T>
 {
     private readonly Dictionary<int, ObjectPool<T>> _pools;
 
-    public DynamicPool()
+    public DynamicPoolGroup()
     {
         _pools = new Dictionary<int, ObjectPool<T>>();
     }
 
-    public DynamicPool(GameObject parent, int startingPoolSize) : this()
+    public DynamicPoolGroup(GameObject parent, int startingPoolSize) : this()
     {
         ParentContainer = parent;
         StartingPoolSize = startingPoolSize;
@@ -29,6 +42,7 @@ public class DynamicPool<T> : IPoolObserver<T> where T : Component, IPoolable<T>
     public Action<T> OnDepsawnedAction { get; set; }
 
     public int ActiveCount => _pools.Sum(p => p.Value.ActiveCount);
+
 
     public bool TryGetItem(GameObject prefab, int gameObjectInstanceId, out T item)
     {
@@ -83,4 +97,6 @@ public class DynamicPool<T> : IPoolObserver<T> where T : Component, IPoolable<T>
     {
         OnDepsawnedAction?.Invoke(effect);
     }
+
+
 }

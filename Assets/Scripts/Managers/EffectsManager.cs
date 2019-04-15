@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Utilities;
 using Events;
@@ -13,28 +14,38 @@ using Object = UnityEngine.Object;
 using Random = System.Random;
 
 /// <summary>
-/// Responsible for spawning and re-using effects.
+/// Responsible for spawning/re-using effects.
+/// <para>Requires that particle systems be prefabs with a <see cref="ParticleEffect"/> MonoBehavior.</para>
+/// <para>Each <see cref="ParticleSystem"/> should have its 'StopAction' set to Callback.</para>
 /// </summary>
 public class EffectsManager : MonoBehaviour
 {
     [Header("Setup")]
     public GameObject ParentContainer;
-    private DynamicPool<ParticleEffect> _pool;
+    private DynamicPoolGroup<ParticleEffect> _poolsGroup;
     public int StartingPoolSize = 5;
 
     private void Awake()
     {
-        _pool = new DynamicPool<ParticleEffect>
+        _poolsGroup = new DynamicPoolGroup<ParticleEffect>
         {
             ParentContainer = ParentContainer,
             StartingPoolSize = StartingPoolSize,
-            OnSpawnedAction = OnSpawnedAction
+            OnSpawnedAction = OnSpawned,
         };
+    }
+
+    public ParticleEffect Spawn(GameObject prefab, Transform parentContainer)
+    {
+        var pool = _poolsGroup.GetPoolForPrefab(prefab);
+        var effect = pool.Spawn(parentContainer.position, parentContainer.rotation);
+        effect.transform.parent = parentContainer;
+        return effect;
     }
 
     public ParticleEffect Spawn(GameObject prefab, Vector3 position, Quaternion? rotation = default, Vector3 scale = default)
     {
-        var pool = _pool.GetPoolForPrefab(prefab);
+        var pool = _poolsGroup.GetPoolForPrefab(prefab);
         var effect = pool.Spawn(position, rotation ?? Quaternion.identity);
         if (scale != default)
         {
@@ -43,7 +54,7 @@ public class EffectsManager : MonoBehaviour
         return effect;
     }
 
-    private void OnSpawnedAction(ParticleEffect effect)
+    private void OnSpawned(ParticleEffect effect)
     {
         effect.Restart();        
     }

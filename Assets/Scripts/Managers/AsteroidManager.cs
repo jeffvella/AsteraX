@@ -14,7 +14,7 @@ using Random = System.Random;
 /// <summary>
 /// Responsible for spawning and keeping track of asteroids.
 /// </summary>
-public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerable<Asteroid>
+public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
 {
     [Header("Setup")]
     public GameObject ParentContainer;
@@ -45,17 +45,9 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
             throw new InvalidOperationException("Asteroid data has no effects assigned");
 
         var randomEffect = AsteroidData.AsteroidEffects[UnityEngine.Random.Range(0, AsteroidData.AsteroidEffects.Count)];
-        //var effect = Instantiate(randomEffect.Prefab, asteroid.transform.position, Quaternion.identity);
-        //effect.transform.localScale = asteroid.transform.localScale / asteroid.Type.Size;     
-
         var scale = asteroid.transform.localScale / asteroid.Type.Size;
         Game.Effects.Spawn(randomEffect.Prefab, asteroid.transform.position, Quaternion.identity, scale);
     }
-
-    //private void OnBulletAsteroidCollision(CollisionArgs<Asteroid, Bullet> args)
-    //{
-    //    SpawnChildAsteroids(args.Source);
-    //}
 
     public Asteroid SpawnAsteroid(int maxSize = int.MaxValue, Vector3 position = default, Vector3 velocity = default, Quaternion rotation = default)
     {
@@ -90,7 +82,7 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
         var prefabId = prefab.GetInstanceID();
         if (!_pools.ContainsKey(prefabId))
         {
-            var pool = new ObjectPool<Asteroid>(prefab, ParentContainer, AsteroidData.StartingPoolSize, this);
+            var pool = new ObjectPool<Asteroid>(prefab, ParentContainer, AsteroidData.StartingPoolSize);
             _pools[prefabId] = pool;
             return pool;
         }
@@ -151,21 +143,6 @@ public class AsteroidManager : MonoBehaviour, IPoolObserver<Asteroid>, IEnumerab
         Vector3 forward = rot * Vector3.forward;
         Vector3 up = rot * Vector3.up;
         return (forward.normalized, up.normalized);
-    }
-
-    void IPoolObserver<Asteroid>.OnItemCreated(IObjectPool<Asteroid> pool, Asteroid asteroid)
-    {
-
-    }
-
-    void IPoolObserver<Asteroid>.OnItemSpawned(IObjectPool<Asteroid> pool, Asteroid asteroid)
-    {
-
-    }
-
-    void IPoolObserver<Asteroid>.OnItemDespawned(IObjectPool<Asteroid> pool, Asteroid asteroid)
-    {
-        //SpawnChildAsteroids(asteroid);
     }
 
     private void SpawnChildAsteroids(Asteroid asteroid)

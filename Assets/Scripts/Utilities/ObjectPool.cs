@@ -10,21 +10,27 @@ using Unity.Collections.LowLevel.Unsafe;
 /// An item that can be pooled.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IPoolable<out T> where T : Component, IPoolable<T>
-
+public interface IPoolable<out T> : IPoolable where T : Component, IPoolable<T>
 {
     /// <summary>
     /// Event that fires when an object is taken out of the pool and made active.
     /// </summary>
     void OnSpawned(IObjectPool<T> pool);
+}
 
+public interface IPoolable
+{
     /// <summary>
     /// Event that fires when an object is returned to the pool and made inactive.
     /// </summary>
     void OnDespawned();
 
+    /// <summary>
+    /// Disables and returns an object to its pool.
+    /// </summary>
     void Despawn();
 }
+
 
 /// <summary>
 /// The basic pool functionality that can be accessed by a pooled item.
@@ -37,7 +43,15 @@ public interface IObjectPool<in T> where T : Component, IPoolable<T>
     /// </summary>
     void Despawn(T item);
 
+    /// <summary>
+    /// How many pooled items are currently spawned
+    /// </summary>
     int ActiveCount { get; }
+
+    /// <summary>
+    /// Location of pooled objects
+    /// </summary>
+    Transform ParentContainer { get; }
 }
 
 /// <summary>
@@ -89,14 +103,15 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
         return _active.ContainsKey(gameObjectInstanceId);
     }
 
-    public ObjectPool(GameObject prefab, GameObject parent, int startingSize, IPoolObserver<T> observer = null)
+    public Transform ParentContainer => _parent.transform;
+
+    public ObjectPool(GameObject prefab, GameObject parentContainer, int startingSize, IPoolObserver<T> observer = null)
     {
         _prefab = prefab;
-        _parent = parent;
+        _parent = parentContainer;
         _observer = observer;
         Expand(startingSize);
     }
-
 
     /// <summary>
     /// Warms up the pool, creating many items in advance so that they can be spawned later without initialization overheads.
@@ -113,7 +128,7 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
         {
             GameObject go = Object.Instantiate(_prefab, Vector3.zero, Quaternion.identity);
             go.SetActive(false);
-            go.transform.parent = _parent.transform;
+            go.transform.parent = ParentContainer.transform;
             var t = go.GetComponent<T>();
             if (t == null)
             {
@@ -167,11 +182,14 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
     {
         if (item is T t)
         {
+            var id = t.GetInstanceID();
+            ExecuteDespawnActions(id);
+
             t.gameObject.SetActive(false);
             t.OnDespawned();
-            _active.Remove(t.GetInstanceID());
-            _available.Enqueue(t);
+            _active.Remove(id);
             _observer?.OnItemDespawned(this, t);
+            _available.Enqueue(t);
         }
         else
         {
@@ -179,6 +197,51 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
         }
     }
 
+    private void ExecuteDespawnActions(int id)
+    {
+        if (_actions.TryGetValue(id, out var actionQueue))
+        {
+            while (actionQueue.Any())
+            {
+                var action = actionQueue.Dequeue();
+                switch (action.Type)
+                {
+                    case PoolCallbackAction.Despawn:
+                        action.Target.Despawn();       
+                        break;
+                }
+            }
+        }
+    }
+
+    private readonly Dictionary<int, Queue<(PoolCallbackAction Type, IPoolable Target)>> _actions 
+        = new Dictionary<int, Queue<(PoolCallbackAction Type, IPoolable Target)>>();
+
+    public void QueueDespawnAction(int triggerId, PoolCallbackAction type, IPoolable target)
+    {
+        var actions = GetActionsForId(triggerId);
+        actions.Enqueue((type, target));
+    }
+
+    public T Spawn(Vector3 position, Quaternion rotation, IPoolable linkedChild)
+    {
+        var result = Spawn(position, rotation);
+        QueueDespawnAction(result.GetInstanceID(), PoolCallbackAction.Despawn, linkedChild);
+        return result;
+    }
+
+    public Queue<(PoolCallbackAction Type, IPoolable Target)> GetActionsForId(int id)
+    {
+        if (!_actions.TryGetValue(id, out var queue))
+        {
+            queue = new Queue<(PoolCallbackAction Type, IPoolable Target)>();            
+            _actions[id] = queue;
+        }
+        return queue;
+    }
+
 }
+
+
 
 
