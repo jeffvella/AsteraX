@@ -119,7 +119,6 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
     /// <summary>
     /// Instantiates a pooled GameObject
     /// </summary>
-    /// <param name="prefab">The prefab to be spawned by this pool</param>
     /// <param name="position">The starting position</param>
     /// <param name="rotation">The starting rotation</param>
     /// <param name="scale">The starting scale</param>
