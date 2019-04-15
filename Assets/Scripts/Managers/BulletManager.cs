@@ -28,11 +28,6 @@ public class BulletManager : MonoBehaviour, IPoolObserver<Bullet>
         return _pool.Spawn(position, rotation);
     }
 
-    public Bullet SpawnBullet(Vector3 position, Quaternion rotation, IPoolable child)
-    {
-        return _pool.Spawn(position, rotation, child);
-    }
-
     public void LinkDespawn(Bullet bullet, IPoolable child)
     {
         _pool.QueueDespawnAction(bullet.GetInstanceID(), PoolCallbackAction.Despawn, child);

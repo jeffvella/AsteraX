@@ -9,6 +9,8 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
     private readonly List<ParticleSystem> _systems = new List<ParticleSystem>();
 
     public int DespawnDelay;
+    private bool _isEmissionPaused;
+    private bool _isDespawning;
 
     private void Awake()
     {
@@ -36,6 +38,8 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
 
     public void Reset()
     {
+        _isDespawning = false;
+
         for (int i = 0; i < _systems.Count; i++)
         {
             var system = _systems[i];
@@ -80,6 +84,8 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
     {
         if (DespawnDelay > 0)
         {
+            _isDespawning = true;
+
             // Prevent particles being destroyed if parent becomes inactive
             transform.parent = _pool.ParentContainer;
 
@@ -89,6 +95,30 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         else
         {
             _pool?.Despawn(this);
+        }
+    }
+
+    public void Update()
+    {
+        WrappingEffectFix();
+    }
+
+    private void WrappingEffectFix()
+    {
+        // There's an issue with the trail when warping around the edges
+        // where it will get confused and spawn a particle in strange places.
+        // This is a temporary fix that is not ideal because the trail breaks
+        // on re-entry for a short duration
+
+        if (!Game.Wrap.Contains(transform.position))
+        {
+            SetEmission(false);
+            _isEmissionPaused = true;
+        }
+        else if (!_isDespawning)
+        {
+            SetEmission(true);
+            _isEmissionPaused = false;
         }
     }
 

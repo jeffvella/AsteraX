@@ -130,6 +130,13 @@ public class WrapManager : MonoBehaviour
         //DebugExtension.DebugBounds(b, result ? Color.blue : Color.cyan);
         return result;
     }
+
+    public bool Contains(Vector3 position, float insetFraction = 0)
+    {
+        return new Bounds(_collider.bounds.center, _collider.bounds.size * (1-insetFraction)).Contains(position);
+    }
+
 }
+
 
 

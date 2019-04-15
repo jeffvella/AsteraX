@@ -199,7 +199,7 @@ public class ObjectPool<T> : IObjectPool<T> where T : Component, IPoolable<T>
 
     private void ExecuteDespawnActions(int id)
     {
-        if (_actions.TryGetValue(id, out var actionQueue))
+        if (_actions.Count > 0 && _actions.TryGetValue(id, out var actionQueue))
         {
             while (actionQueue.Any())
             {

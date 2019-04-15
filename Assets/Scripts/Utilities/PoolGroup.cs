@@ -12,20 +12,19 @@ public enum PoolCallbackAction
 
 /// <summary>
 /// A general purpose pool that can spawn manage multiple prefab variants
-/// (as long as they contain the <para>T</para> component).
-/// Does not require that items to be pooled are defined in advance.
+/// (as long as they contain the T component).
 /// </summary>
-/// <typeparam name="T">component shared by objects to be pooled</typeparam>
-public class DynamicPoolGroup<T> : IPoolObserver<T> where T : Component, IPoolable<T>
+/// <typeparam name="T">component shared by objects</typeparam>
+public class PoolGroup<T> : IPoolObserver<T> where T : Component, IPoolable<T>
 {
     private readonly Dictionary<int, ObjectPool<T>> _pools;
 
-    public DynamicPoolGroup()
+    public PoolGroup()
     {
         _pools = new Dictionary<int, ObjectPool<T>>();
     }
 
-    public DynamicPoolGroup(GameObject parent, int startingPoolSize) : this()
+    public PoolGroup(GameObject parent, int startingPoolSize) : this()
     {
         ParentContainer = parent;
         StartingPoolSize = startingPoolSize;

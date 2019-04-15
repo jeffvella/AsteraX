@@ -22,12 +22,12 @@ public class EffectsManager : MonoBehaviour
 {
     [Header("Setup")]
     public GameObject ParentContainer;
-    private DynamicPoolGroup<ParticleEffect> _poolsGroup;
+    private PoolGroup<ParticleEffect> _poolsGroup;
     public int StartingPoolSize = 5;
 
     private void Awake()
     {
-        _poolsGroup = new DynamicPoolGroup<ParticleEffect>
+        _poolsGroup = new PoolGroup<ParticleEffect>
         {
             ParentContainer = ParentContainer,
             StartingPoolSize = StartingPoolSize,

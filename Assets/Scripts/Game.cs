@@ -77,7 +77,7 @@ public class Game : MonoBehaviour
 
     private void OnSessionUpdated(PlayerManager.PlayerSession session)
     {
-        if (session.Lives <= 0)
+        if (_state == GameState.GameStarted && session.Lives <= 0)
         {
             EndGame();
         }
