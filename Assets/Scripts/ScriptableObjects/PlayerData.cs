@@ -14,6 +14,8 @@ public class ShipData
     public float TiltDegrees = 15f;
     public float StartingHealth = 1;
     public ShipStateChangedEvent DestroyedEvent;
+    public ParticleEffect SpawnEffect;
+    public ParticleEffect DespawnEffect;
 }
 
 [CreateAssetMenu]

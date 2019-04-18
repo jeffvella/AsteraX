@@ -32,4 +32,4 @@ MonoBehaviour:
       type: 2}
     OnGameStateChanged: {fileID: 11400000, guid: c5ac3e92c5ae35a42a410fd097153139,
       type: 2}
-  StartingAsteroids: 3
+  StartingAsteroids: 8

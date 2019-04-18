@@ -82,7 +82,7 @@ public class PlayerManager : MonoBehaviour
         _ship = Instantiate(PlayerData.ShipData.ShipPrefab, spawnPosition, Quaternion.identity);
         _shipController = _ship.GetComponent<ShipController>();
         _shipController.ShipData = PlayerData.ShipData;
-        _shipController.SetState(ShipState.Alive);
+        _shipController.SetState(ShipState.Spawning);
 
         return _shipController;
     }

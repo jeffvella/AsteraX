@@ -117,7 +117,7 @@ public class Game : MonoBehaviour
                 break;
 
             default:
-                throw new GameExceptions.InvalidStateChangeException<GameState>(_state, GameState.GameOver);
+                throw new GameExceptions.InvalidStateChangeException<GameState>(previous, newState);
         }
 
         _state = newState;

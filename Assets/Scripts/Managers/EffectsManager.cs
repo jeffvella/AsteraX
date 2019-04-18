@@ -35,23 +35,36 @@ public class EffectsManager : MonoBehaviour
         };
     }
 
-    public ParticleEffect Spawn(GameObject prefab, Transform parentContainer)
+    public ParticleEffect Spawn(ParticleEffect prefab, Transform parentContainer)
     {
-        var pool = _poolsGroup.GetPoolForPrefab(prefab);
+        var pool = _poolsGroup.GetPoolForPrefab(prefab.gameObject);
         var effect = pool.Spawn(parentContainer.position, parentContainer.rotation);
         effect.transform.parent = parentContainer;
         return effect;
     }
 
-    public ParticleEffect Spawn(GameObject prefab, Vector3 position, Quaternion? rotation = default, Vector3 scale = default)
+    public ParticleEffect Spawn(ParticleEffect prefab, Vector3 position, Quaternion? rotation = default, Vector3 scale = default)
     {
-        var pool = _poolsGroup.GetPoolForPrefab(prefab);
+        var pool = _poolsGroup.GetPoolForPrefab(prefab.gameObject);
         var effect = pool.Spawn(position, rotation ?? Quaternion.identity);
         if (scale != default)
         {
             effect.transform.localScale = scale;
         }
         return effect;
+    }
+
+    public IEnumerator WaitForEffect(ParticleEffect effect, int timeoutSeconds = 2)
+    {
+        var timeout = DateTime.UtcNow + TimeSpan.FromSeconds(timeoutSeconds);
+        while (effect.IsSpawned)
+        {
+            if (DateTime.UtcNow > timeout)
+                break;
+
+            yield return new WaitForSeconds(0.25f);
+        }
+        yield return null;
     }
 
     private void OnSpawned(ParticleEffect effect)

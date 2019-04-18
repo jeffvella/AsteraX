@@ -14,7 +14,9 @@ public enum ShipState
 {
     None = 0,
     Awake,
+    Spawning,
     Alive,
+    Dying,
     Dead,
 }
 
@@ -31,12 +33,14 @@ public class ShipController : MonoBehaviour
     [Header("Setup")]
     public Transform TurretRotator;
     public Transform TiltTransform;
+    public GameObject Model;
 
     public ShipStatus Status => _status;
     private ShipStatus _status;
     private Vector3 _direction;
     private Collider _collider;
     private Rigidbody _rigidBody;
+    private int _id;
 
     public ShipData ShipData { get; set; }
 
@@ -46,16 +50,20 @@ public class ShipController : MonoBehaviour
 
     void Awake()
     {
+        _id = GetInstanceID();
         _rigidBody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
         SetState(ShipState.Awake);
     }
 
     void Update()
-    {        
-        RotateTurretToMousePosition();
-        FireWhenButtonDown();
-        TiltForwardsWhenMoving();
+    {
+        if (_status.State == ShipState.Alive)
+        {
+            RotateTurretToMousePosition();
+            FireWhenButtonDown();
+            TiltForwardsWhenMoving();
+        }
     }
 
     private void FireWhenButtonDown()
@@ -103,7 +111,7 @@ public class ShipController : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.GetComponent<Asteroid>() is Asteroid asteroid)
+        if (_status.State == ShipState.Alive && collision.transform.GetComponent<Asteroid>() is Asteroid asteroid)
         {
             ApplyDamage(asteroid.Type.CollisionDamage); 
         }        
@@ -115,32 +123,40 @@ public class ShipController : MonoBehaviour
 
         if (_status.Health <= 0)
         {
-            SetState(ShipState.Dead);
+            SetState(ShipState.Dying);
         }
     }
 
     private void FixedUpdate()
     {
-        MoveShipFromInput();
+        if (_status.State == ShipState.Alive)
+        {
+            MoveShipFromInput();
+        }
     }
 
     public void SetState(ShipState state)
     {
         if (IsStateTransitioning)
+        {
             throw new InvalidOperationException("Ship state changed while already changing state");
+        }
 
         IsStateTransitioning = true;
         switch (state)
         {
-            case ShipState.Awake: break;
-            case ShipState.None: break;
-
+            case ShipState.Awake:
+            case ShipState.None: 
             case ShipState.Alive:
-                SpawnSequence();
-                break;        
-                
             case ShipState.Dead:
-                DeathSequence();
+                break;
+
+            case ShipState.Spawning:
+                StartCoroutine(SpawnSequence());
+                break;
+
+            case ShipState.Dying:
+                StartCoroutine(DeathSequence());
                 break;
 
             default:
@@ -150,16 +166,36 @@ public class ShipController : MonoBehaviour
         IsStateTransitioning = false;
     }
 
-    private void SpawnSequence()
+    private IEnumerator SpawnSequence()
     {
         _status.Health = ShipData.StartingHealth;
+
+        var effect = Game.Effects.Spawn(ShipData.SpawnEffect, transform.position);
+        yield return Game.Effects.WaitForEffect(effect);
+
+        SetState(ShipState.Alive);
+        yield return null;
     }
 
-    private void DeathSequence()
+    public bool IsRendered
     {
-        Destroy(gameObject);
-
-        ShipData.DestroyedEvent.Raise(new ShipStatusArgs(GetInstanceID(), _status));
+        get => Model.activeInHierarchy;
+        set => Model.SetActive(value);
     }
+
+    private IEnumerator DeathSequence()
+    {
+        IsRendered = false;
+
+        var effect = Game.Effects.Spawn(ShipData.DespawnEffect, transform.position);
+        yield return Game.Effects.WaitForEffect(effect);
+
+        SetState(ShipState.Dead);
+        ShipData.DestroyedEvent.Raise(new ShipStatusArgs(_id, _status));
+
+        Destroy(gameObject);
+        yield return null;
+    }
+
 }
 

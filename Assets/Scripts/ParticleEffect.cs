@@ -21,6 +21,9 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         }
     }
 
+    public bool IsSpawned => _pool != null;
+
+
     public void OnParticleSystemStopped()
     {
         Despawn();

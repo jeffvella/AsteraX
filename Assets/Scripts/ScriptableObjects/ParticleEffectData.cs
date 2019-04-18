@@ -4,5 +4,5 @@ using UnityEngine;
 [Serializable]
 public class ParticleEffectData
 {
-    public GameObject Prefab;
+    public ParticleEffect Prefab;
 }

@@ -328,6 +328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TurretRotator: {fileID: 4128896187653560}
   TiltTransform: {fileID: 8858914231833094624}
+  Model: {fileID: 6887134369001759212}
 --- !u!65 &784784623
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -394,7 +395,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8858914231833094624}
   m_Layer: 8
-  m_Name: ShipForwardPivot
+  m_Name: ShipModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

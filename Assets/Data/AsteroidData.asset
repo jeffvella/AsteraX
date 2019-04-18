@@ -30,8 +30,9 @@ MonoBehaviour:
     Children: 3
     CollisionDamage: 1
   AsteroidEffects:
-  - Prefab: {fileID: 784233752896293612, guid: de92c0948864b5e49b92662ef7a2d036, type: 3}
-  - Prefab: {fileID: 8324843146490718610, guid: bd15489c0e32d204f88f859c59084c31,
+  - Prefab: {fileID: 5393569645042734315, guid: de92c0948864b5e49b92662ef7a2d036,
+      type: 3}
+  - Prefab: {fileID: 7174971895723012830, guid: bd15489c0e32d204f88f859c59084c31,
       type: 3}
   MinMoveSpeed: 5
   MaxMoveSpeed: 10
