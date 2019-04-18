@@ -22,8 +22,8 @@ public class PlayerManager : MonoBehaviour
     [Header("Setup")]
     public PlayerData PlayerData;
 
-    public GameObject Ship => _ship;
-    private GameObject _ship;
+    public GameObject ShipGo => _shipGo;
+    private GameObject _shipGo;
 
     public ShipController ShipController => _shipController;
     private ShipController _shipController;
@@ -78,10 +78,10 @@ public class PlayerManager : MonoBehaviour
             _spawnPositions = GenerateSpiralSpawnPositions();
         }
 
-        var spawnPosition = GetSafeSpiralSpawnPosition(); // GetExpandScanSafeSpawnPosition();
-        _ship = Instantiate(PlayerData.ShipData.ShipPrefab, spawnPosition, Quaternion.identity);
-        _shipController = _ship.GetComponent<ShipController>();
-        _shipController.ShipData = PlayerData.ShipData;
+        var spawnPosition = GetSafeSpiralSpawnPosition();
+        _shipGo = Instantiate(PlayerData.ShipData.ShipPrefab, spawnPosition, Quaternion.identity);
+        _shipController = _shipGo.GetComponent<ShipController>();
+        _shipController.Initialize(PlayerData.ShipData);
         _shipController.SetState(ShipState.Spawning);
 
         return _shipController;
@@ -142,12 +142,10 @@ public class PlayerManager : MonoBehaviour
         {
             return safePosition;
         }
-
         if (TryFindSafePosition(unsafeAreas, _spawnPositions.ToArray(), startPosition, radius/2, out safePosition))
         {
             return safePosition;
         }
-
         return startPosition;
     }
 
@@ -188,97 +186,6 @@ public class PlayerManager : MonoBehaviour
         result = default;
         return false;
     }
-
-    //private Vector3 GetDynamicScanSafePosition()
-    //{
-    //    var startPosition = Game.Wrap.Bounds.center;
-    //    var unsafeAreas = Game.Asteroids.Select(a => a.Bounds).ToArray();
-
-    //    var searchPositions = new Queue<Vector3>();
-    //    searchPositions.Enqueue(startPosition);
-
-    //    int startingSearchRadius = 6;
-    //    int maxSearchIterationsPerRadius = 10;
-
-    //    // Search increasingly smaller spaces if a safe spot can't be found.
-    //    for (int r = startingSearchRadius - 1; r >= 1; r--)
-    //    {
-    //        var searchSize = new Vector3(r, r, r);
-    //        for (int i = 0; i < maxSearchIterationsPerRadius; i++)
-    //        {
-    //            // Check the current position (next in queue) against all unsafeAreas
-    //            if (TryExpandAndFindSafePosition(searchPositions, searchSize, unsafeAreas, out Vector3 safeSpot))
-    //            {
-    //                //EditorApplication.isPaused = true;
-    //                return safeSpot;
-    //            }
-    //        }
-    //    }
-
-    //    //EditorApplication.isPaused = true;
-    //    return startPosition;
-    //}
-
-    //private static bool TryExpandAndFindSafePosition(Queue<Vector3> searchPositions, Vector3 searchSize, Bounds[] unsafeAreas, out Vector3 safeSpot)
-    //{
-    //    var searchPosition = searchPositions.Dequeue();
-    //    var searchArea = new Bounds(searchPosition, searchSize);
-
-    //    //DebugExtension.DebugCircle(searchArea.center, Vector3.up, Color.blue, Math.Max(searchArea.extents.x, searchArea.extents.z));
-    //    //DebugExtension.DebugPoint(searchPosition, Color.white);
-
-    //    for (var i = 0; i < unsafeAreas.Length; i++)
-    //    {
-    //        var unsafeArea = unsafeAreas[i];
-
-    //        // Add some randomness to point selection for when the asteroids are clustered together
-    //        var referencePoint = i % 2 == 0 ? searchPosition : Game.Wrap.RandomPointInBounds(1f);
-
-    //        // Always queue up at least one new search position before leaving method.
-    //        var exploreArea = unsafeAreas[UnityEngine.Random.Range(i, unsafeAreas.Length)];
-    //        var pointOnAreaBounds = exploreArea.ClosestPoint(referencePoint);
-    //        var halfwayPoint = Vector3.Slerp(pointOnAreaBounds, referencePoint, 0.5f);
-    //        searchPositions.Enqueue(halfwayPoint);
-       
-    //        //DebugExtension.DebugPoint(halfwayPoint, Color.yellow);
-    //        //DebugExtension.DebugCircle(unsafeArea.center, Vector3.up, Color.yellow, Math.Max(unsafeArea.extents.x, unsafeArea.extents.z));
-
-    //        if (unsafeArea.Intersects(searchArea))
-    //        {               
-    //            safeSpot = default;
-    //            return false;
-    //        }
-    //    }
-
-    //    if (!Game.Wrap.Contains(searchArea, 2f))
-    //    {
-    //        safeSpot = default;
-    //        return false;
-    //    }
-
-    //    safeSpot = searchPosition;
-    //    return true;
-    //}
-
-    //private List<Vector3> GenerateGridSpawnPositions(float size = 5f, float edgePadding = 3f)
-    //{
-    //    var bounds = Game.Wrap.Bounds;
-    //    var result = new List<Vector3>();
-
-    //    for (float x = bounds.min.x + edgePadding; x < bounds.max.x - edgePadding; x += size)
-    //    {
-    //        for (float z = bounds.min.z + edgePadding; z < bounds.max.z - edgePadding; z += size)
-    //        {
-    //            var pos = new Vector3(x, bounds.center.y, z);
-    //            result.Add(pos);
-    //            //DebugExtension.DebugPoint(pos);
-    //        }
-    //    }
-    //    return result;
-    //}
-
-
-
 }
 
 

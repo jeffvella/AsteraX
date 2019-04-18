@@ -19,9 +19,11 @@ MonoBehaviour:
     TiltDegrees: 15
     StartingHealth: 1
     DestroyedEvent: {fileID: 11400000, guid: b0439a4a788c3b345a9767c0662fba22, type: 2}
-    SpawnEffect: {fileID: 1115271985589990193, guid: 4226330dd5cd6644181df59f880ceaac,
+    SpawnEffect: {fileID: 1115271985589990193, guid: 62ab3cd16a0b72748bf93878649a3b5e,
       type: 3}
-    DespawnEffect: {fileID: 1115271985589990193, guid: 62ab3cd16a0b72748bf93878649a3b5e,
+    DespawnEffect: {fileID: 1115271985589990193, guid: 4226330dd5cd6644181df59f880ceaac,
+      type: 3}
+    ExhaustEffect: {fileID: 861797051891675022, guid: c77428ff9cb5b78448ae42ffdf5f935a,
       type: 3}
   StartingLives: 3
   StartingScore: 0

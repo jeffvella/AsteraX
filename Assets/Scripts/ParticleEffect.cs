@@ -11,6 +11,9 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
     public int DespawnDelay;
     private bool _isEmissionPaused;
     private bool _isDespawning;
+    private bool _isEmitting;
+    private bool _isActive;
+    private bool _isPlayOnAwake;
 
     private void Awake()
     {
@@ -19,6 +22,18 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         {
             _systems.AddRange(childSystems);
         }
+        _isActive = true;
+        _isPlayOnAwake = IsPlayOnAwake();
+    }
+
+    private bool IsPlayOnAwake()
+    {
+        for (int i = 0; i < _systems.Count; i++)
+        {
+            var main = _systems[i].main;
+            return main.simulationSpeed > 0;
+        }
+        return false;
     }
 
     public bool IsSpawned => _pool != null;
@@ -50,16 +65,18 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
             system.Clear();
             SetEmission(system, true);
         }
+        _isActive = false;
     }
-    private void Play()
+
+    public void Play()
     {
         for (int i = 0; i < _systems.Count; i++)
         {
-            _systems[i].Play();
+            _systems[i].Play();   
         }
     }
 
-    private void Stop()
+    public void Stop()
     {
         for (int i = 0; i < _systems.Count; i++)
         {
@@ -75,13 +92,33 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         }
     }
 
+    private int _restartCount;
+
     public void Restart()
     {
         Reset();
-        Play();
+
+        if (!_isPlayOnAwake)
+        {
+            Play();
+        }      
     }
 
     public bool IsValid => _pool != null;
+
+    public bool IsActive
+    {
+        get
+        {
+            for (int i = 0; i < _systems.Count; i++)
+            {
+                if (_systems[i].isPlaying)
+                    return true;
+            }
+
+            return false;
+        }
+    }
 
     public void Despawn()
     {
@@ -125,7 +162,7 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         }
     }
 
-    private void SetEmission(bool value)
+    public void SetEmission(bool value)
     {
         for (int i = 0; i < _systems.Count; i++)
         {
@@ -133,8 +170,14 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         }
     }
 
+    private void OnDestroy()
+    {
+        //_pool.Despawn(this);
+    }
+
     public void SetEmission(ParticleSystem system, bool value)
     {
+
         var emission = system.emission;
         emission.enabled = value;
     }

@@ -16,6 +16,7 @@ public class ShipData
     public ShipStateChangedEvent DestroyedEvent;
     public ParticleEffect SpawnEffect;
     public ParticleEffect DespawnEffect;
+    public ParticleEffect ExhaustEffect;
 }
 
 [CreateAssetMenu]

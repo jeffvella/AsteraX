@@ -16,7 +16,7 @@ using Random = System.Random;
 /// <summary>
 /// Responsible for spawning/re-using effects.
 /// <para>Requires that particle systems be prefabs with a <see cref="ParticleEffect"/> MonoBehavior.</para>
-/// <para>Each <see cref="ParticleSystem"/> should have its 'StopAction' set to Callback.</para>
+/// <para>Each <see cref="ParticleSystem"/> should have its 'StopAction' set to Callback and 'PlayOnAwake' enabled</para>
 /// </summary>
 public class EffectsManager : MonoBehaviour
 {

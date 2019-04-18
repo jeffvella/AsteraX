@@ -36,24 +36,36 @@ public class ShipController : MonoBehaviour
     public GameObject Model;
 
     public ShipStatus Status => _status;
+    private int _id;
     private ShipStatus _status;
     private Vector3 _direction;
     private Collider _collider;
     private Rigidbody _rigidBody;
-    private int _id;
-
-    public ShipData ShipData { get; set; }
+    private ParticleEffect _exhaustEmitter;
+    private ShipData _shipData;
 
     public bool IsStateTransitioning { get; private set; }
+
+    public bool IsRendered
+    {
+        get => Model.activeInHierarchy;
+        set => Model.SetActive(value);
+    }
 
     public Bounds Bounds => _collider.bounds;
 
     void Awake()
     {
+        SetState(ShipState.Awake);
+    }
+
+    public void Initialize(ShipData data)
+    {
         _id = GetInstanceID();
         _rigidBody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        SetState(ShipState.Awake);
+        _shipData = data;
+        _exhaustEmitter = Game.Effects.Spawn(_shipData.ExhaustEffect, transform);
     }
 
     void Update()
@@ -66,6 +78,19 @@ public class ShipController : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+
+    }
+
+    private void FixedUpdate()
+    {
+        if (_status.State == ShipState.Alive)
+        {
+            MoveShipFromInput();
+        }
+    }
+
     private void FireWhenButtonDown()
     {
         if (CrossPlatformInputManager.GetButtonUp("Fire1"))
@@ -74,11 +99,13 @@ public class ShipController : MonoBehaviour
 
             var randomEffectIndex = UnityEngine.Random.Range(0, Game.Bullets.BulletData.BulletEffects.Count);
             var randomEffectDefinition = Game.Bullets.BulletData.BulletEffects[randomEffectIndex];
-            var effectInstance = Game.Effects.Spawn(randomEffectDefinition.Prefab, bullet.transform);
+            var bulletEffect = Game.Effects.Spawn(randomEffectDefinition.Prefab, bullet.transform);
 
-            Game.Bullets.LinkDespawn(bullet, effectInstance);   
+            Game.Bullets.LinkDespawn(bullet, bulletEffect);   
         }
     }
+
+    private bool _isExhaustOn;
 
     private void MoveShipFromInput()
     {
@@ -89,14 +116,26 @@ public class ShipController : MonoBehaviour
         // clamp limits excess velocity on diagonal axes.
         _direction = Vector3.ClampMagnitude(new Vector3(leftRight, 0, upDown),1);
 
-        transform.position += _direction * ShipData.MaxSpeed * Time.deltaTime;
+        var isMoving = _direction != Vector3.zero;
+        if (!isMoving && _exhaustEmitter.IsActive)
+        {
+            _exhaustEmitter.Stop();
+            _isExhaustOn = false;
+        }
+        else if (isMoving && !_exhaustEmitter.IsActive)
+        {
+            _exhaustEmitter.Play();
+            _isExhaustOn = true;
+        }
+
+        transform.position += _direction * _shipData.MaxSpeed * Time.deltaTime;
         //_rigidBody.MovePosition(_rigidBody.position + _direction * ShipData.MaxSpeed * Time.deltaTime);
     }
 
     private void TiltForwardsWhenMoving()
     {
         var axis = Vector3.Cross(_direction.normalized, -transform.up);
-        var tilt = Quaternion.AngleAxis(ShipData.TiltDegrees, axis);
+        var tilt = Quaternion.AngleAxis(_shipData.TiltDegrees, axis);
         TiltTransform.rotation = Quaternion.Slerp(transform.rotation, tilt, _direction.magnitude);
     }
 
@@ -124,14 +163,6 @@ public class ShipController : MonoBehaviour
         if (_status.Health <= 0)
         {
             SetState(ShipState.Dying);
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (_status.State == ShipState.Alive)
-        {
-            MoveShipFromInput();
         }
     }
 
@@ -168,30 +199,24 @@ public class ShipController : MonoBehaviour
 
     private IEnumerator SpawnSequence()
     {
-        _status.Health = ShipData.StartingHealth;
+        _status.Health = _shipData.StartingHealth;
 
-        var effect = Game.Effects.Spawn(ShipData.SpawnEffect, transform.position);
+        var effect = Game.Effects.Spawn(_shipData.SpawnEffect, transform.position);
         yield return Game.Effects.WaitForEffect(effect);
 
         SetState(ShipState.Alive);
         yield return null;
     }
 
-    public bool IsRendered
-    {
-        get => Model.activeInHierarchy;
-        set => Model.SetActive(value);
-    }
-
     private IEnumerator DeathSequence()
     {
         IsRendered = false;
 
-        var effect = Game.Effects.Spawn(ShipData.DespawnEffect, transform.position);
+        var effect = Game.Effects.Spawn(_shipData.DespawnEffect, transform.position);
         yield return Game.Effects.WaitForEffect(effect);
 
         SetState(ShipState.Dead);
-        ShipData.DestroyedEvent.Raise(new ShipStatusArgs(_id, _status));
+        _shipData.DestroyedEvent.Raise(new ShipStatusArgs(_id, _status));
 
         Destroy(gameObject);
         yield return null;
