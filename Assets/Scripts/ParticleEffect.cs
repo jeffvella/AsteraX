@@ -138,10 +138,11 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         }
     }
 
-    public void Update()
+    public void LateUpdate()
     {
         WrappingEffectFix();
     }
+
 
     private void WrappingEffectFix()
     {
