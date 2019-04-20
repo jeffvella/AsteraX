@@ -106,7 +106,7 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
 
     public bool IsValid => _pool != null;
 
-    public bool IsEmitting
+    public bool IsPlaying
     {
         get
         {
