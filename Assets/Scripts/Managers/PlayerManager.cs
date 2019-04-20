@@ -131,18 +131,23 @@ public class PlayerManager : MonoBehaviour
     {
         var startPosition = Game.Wrap.Bounds.center;
         var unsafeAreas = Game.Asteroids.Select(a => a.Bounds).ToArray();
+        var possiblePositions = _spawnPositions.ToArray();
 
-        if (TryFindSafePosition(unsafeAreas, _spawnPositions.ToArray(), startPosition, radius, out var safePosition))
+        if (TryFindSafePosition(unsafeAreas, possiblePositions, startPosition, radius, out var safePosition))
         {
             return safePosition;
         }
-        if (TryFindSafePosition(unsafeAreas, _spawnPositions.ToArray(), startPosition, radius/2, out safePosition))
+        if (TryFindSafePosition(unsafeAreas, possiblePositions, startPosition, radius/2, out safePosition))
         {
             return safePosition;
         }
+
         return startPosition;
     }
 
+    /// <summary>
+    /// Finds the first position that doesn't intersect with unsafe areas.
+    /// </summary>
     private bool TryFindSafePosition(Bounds[] unsafeAreas, Vector3[] positions, Vector3 startPosition, float radius, out Vector3 result)
     {
         var searchSize = new Vector3(radius, radius, radius);
@@ -170,11 +175,9 @@ public class PlayerManager : MonoBehaviour
                 }
             }
             if (isSafe)
-            {
-                {
-                    result = positions[i];
-                    return true;
-                }
+            {                
+                result = positions[i];
+                return true;                
             }
         }
         result = default;

@@ -99,8 +99,6 @@ public class Ship : MonoBehaviour
         }
     }
 
-    private bool _isExhaustOn;
-
     private void MoveShipFromInput()
     {
         var leftRight = CrossPlatformInputManager.GetAxis("Horizontal");
@@ -111,15 +109,13 @@ public class Ship : MonoBehaviour
         _direction = Vector3.ClampMagnitude(new Vector3(leftRight, 0, upDown),1);
 
         var isMoving = _direction != Vector3.zero;
-        if (!isMoving && _exhaustEmitter.IsActive)
+        if (!isMoving && _exhaustEmitter.IsPlaying)
         {
             _exhaustEmitter.Stop();
-            _isExhaustOn = false;
         }
-        else if (isMoving && !_exhaustEmitter.IsActive)
+        else if (isMoving && !_exhaustEmitter.IsPlaying)
         {
             _exhaustEmitter.Play();
-            _isExhaustOn = true;
         }
 
         transform.position += _direction * _shipData.MaxSpeed * Time.deltaTime;
