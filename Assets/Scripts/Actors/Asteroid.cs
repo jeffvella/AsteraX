@@ -56,7 +56,7 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
             bullet.Despawn();
             Despawn();
 
-            Game.Events.OnBulletAsteroidCollision.Raise((this, bullet));
+            Game.Events.BulletAsteroidCollision.Raise((this, bullet));
         }
     }
 }

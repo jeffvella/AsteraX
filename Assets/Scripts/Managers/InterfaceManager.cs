@@ -27,9 +27,9 @@ public class InterfaceManager : MonoBehaviour
         _mainMenu = Instantiate(_interfaceData.MainMenuPrefab, parent: transform);
         _mainMenu.gameObject.SetActive(false);
 
-        Game.Events.OnSessionUpdated.Register(OnSessionUpdated);
-        Game.Events.OnBulletAsteroidCollision.Register(OnAsteroidCollision);
-        Game.Events.OnGameStateChanged.Register(OnGameStateChanged);
+        Game.Events.SessionUpdated.Register(OnSessionUpdated);
+        Game.Events.BulletAsteroidCollision.Register(OnAsteroidCollision);
+        Game.Events.GameStateChanged.Register(OnGameStateChanged);
     }
 
     public void Start()

@@ -29,9 +29,9 @@ public class PlayerManager : MonoBehaviour
 
     private void Awake()
     {
-        Game.Events.OnShipDestroyed.Register(OnShipDestroyed);
-        Game.Events.OnBulletAsteroidCollision.Register(OnBulletAsteroidCollision);
-        Game.Events.OnGameStateChanged.Register(OnGameStateChanged);
+        Game.Events.ShipDestroyed.Register(OnShipDestroyed);
+        Game.Events.BulletAsteroidCollision.Register(OnBulletAsteroidCollision);
+        Game.Events.GameStateChanged.Register(OnGameStateChanged);
         InitializePlayerSession();
     }
 
@@ -50,7 +50,7 @@ public class PlayerManager : MonoBehaviour
         _session.Score += obj.Asteroid.Type.Points;
         _session.AsteroidsDestroyed++;
 
-        Game.Events.OnSessionUpdated.Raise(_session);
+        Game.Events.SessionUpdated.Raise(_session);
     }
 
     private void InitializePlayerSession()

@@ -69,7 +69,7 @@ public class Game : MonoBehaviour
         _playerManager = Instantiate(_gameData.Managers.PlayerManagerPrefab, parent: transform);
         _bulletManager = Instantiate(_gameData.Managers.BulletManagerPrefab, parent: transform);
         
-        Events.OnSessionUpdated.Register(OnSessionUpdated);
+        Events.SessionUpdated.Register(OnSessionUpdated);
     }
 
     public void Start()
@@ -124,7 +124,7 @@ public class Game : MonoBehaviour
         }
 
         _state = newState;
-        Events.OnGameStateChanged.Raise((previous, newState));
+        Events.GameStateChanged.Raise((previous, newState));
     }
 
     private static void ResetGame()

@@ -16,10 +16,10 @@ public class ManagerDefinitions
 [Serializable]
 public class EventReferences
 {
-    public PlayerSessionUpdatedEvent OnSessionUpdated;
-    public ShipStateChangedEvent OnShipDestroyed;
-    public AsteroidBulletCollisionEvent OnBulletAsteroidCollision;
-    public GameStateChangedEvent OnGameStateChanged;
+    public PlayerSessionUpdatedEvent SessionUpdated;
+    public ShipStateChangedEvent ShipDestroyed;
+    public AsteroidBulletCollisionEvent BulletAsteroidCollision;
+    public GameStateChangedEvent GameStateChanged;
 }
 
 [CreateAssetMenu]

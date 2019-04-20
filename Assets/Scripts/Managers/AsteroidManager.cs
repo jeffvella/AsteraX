@@ -23,7 +23,7 @@ public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
 
     void Awake()
     {
-        Game.Events.OnBulletAsteroidCollision.Register(OnBulletAsteroidCollision);
+        Game.Events.BulletAsteroidCollision.Register(OnBulletAsteroidCollision);
     }
 
     private void OnBulletAsteroidCollision((Asteroid Asteroid, Bullet Bullet) obj)
