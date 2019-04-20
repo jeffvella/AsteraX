@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts.Utilities;
-using UnityEngine;
-using UnityEngine.UIElements;
-using Object = System.Object;
-
-namespace Events
+﻿namespace Events
 {
     //public class BaseCollisionEvent<T1, T2> : GameEventBase<CollisionArgs<T1,T2>> 
     //    where T1 : MonoBehaviour 

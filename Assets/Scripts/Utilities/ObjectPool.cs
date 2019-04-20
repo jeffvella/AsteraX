@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using System.Runtime.CompilerServices;
-using Unity.Collections.LowLevel.Unsafe;
 
 /// <summary>
 /// An item that can be pooled.

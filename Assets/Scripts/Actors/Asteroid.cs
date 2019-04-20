@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Events;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
 {

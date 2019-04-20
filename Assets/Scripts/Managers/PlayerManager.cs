@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Events;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Debug = UnityEngine.Debug;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -25,8 +19,8 @@ public class PlayerManager : MonoBehaviour
     public GameObject ShipGo => _shipGo;
     private GameObject _shipGo;
 
-    public ShipController ShipController => _shipController;
-    private ShipController _shipController;
+    public Ship Ship => _ship;
+    private Ship _ship;
 
     private List<Vector3> _spawnPositions;
 
@@ -45,7 +39,7 @@ public class PlayerManager : MonoBehaviour
     {
         switch (obj.Current)
         {
-            case GameState.GameStarted:
+            case GameState.Started:
                 InitializePlayerSession();
                 break;
         }
@@ -71,7 +65,7 @@ public class PlayerManager : MonoBehaviour
         PlayerData.SessionUpdatedEvent.Raise(_session);
     }
 
-    public ShipController SpawnShip()
+    public Ship SpawnShip()
     {
         if (_spawnPositions == null)
         {
@@ -80,11 +74,11 @@ public class PlayerManager : MonoBehaviour
 
         var spawnPosition = GetSafeSpiralSpawnPosition();
         _shipGo = Instantiate(PlayerData.ShipData.ShipPrefab, spawnPosition, Quaternion.identity);
-        _shipController = _shipGo.GetComponent<ShipController>();
-        _shipController.Initialize(PlayerData.ShipData);
-        _shipController.SetState(ShipState.Spawning);
+        _ship = _shipGo.GetComponent<Ship>();
+        _ship.Initialize(PlayerData.ShipData);
+        _ship.SetState(ShipState.Spawning);
 
-        return _shipController;
+        return _ship;
     }
 
     private void OnShipDestroyed(ShipStateChangedEventInfo info, ShipStatusArgs status)

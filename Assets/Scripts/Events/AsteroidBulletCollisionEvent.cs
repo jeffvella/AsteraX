@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Events;
+﻿using Events;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Events/" + nameof(AsteroidBulletCollisionEvent), fileName = nameof(AsteroidBulletCollisionEvent))]

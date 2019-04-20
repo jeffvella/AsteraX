@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using Events;
-using UnityEditor;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
-using UnityEngine.Experimental.PlayerLoop;
-using UnityEngine.Experimental.XR;
-using UnityEngine.UIElements;
 using UnityStandardAssets.CrossPlatformInput;
 
 public enum ShipState
@@ -20,7 +14,7 @@ public enum ShipState
     Dead,
 }
 
-public class ShipController : MonoBehaviour
+public class Ship : MonoBehaviour
 {
 
     [Serializable]

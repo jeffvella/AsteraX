@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using Events;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using Debug = UnityEngine.Debug;
 
 [Serializable]
 public class ManagerDefinitions

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -8,7 +6,7 @@ using UnityEngine.UI;
 /// inform the player of important information such as score and lives.
 /// </summary>
 [RequireComponent(typeof(Canvas))]
-public class HudInterface : MonoBehaviour
+public class HudInterface : MonoBehaviour, IGameUserInterface
 {
     public Text LivesElement;
     public Text ScoreElement;
@@ -36,7 +34,7 @@ public class HudInterface : MonoBehaviour
         UpdateScore(Game.Player.Session.Score);
     }
 
-    public void Show(bool reset = true)
+    public void Show()
     {
         Reset();
         gameObject.SetActive(true);

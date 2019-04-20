@@ -2,14 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Utilities;
-using Events;
-using JetBrains.Annotations;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Experimental.VFX;
-using Object = UnityEngine.Object;
-using Random = System.Random;
 
 /// <summary>
 /// Responsible for spawning and keeping track of asteroids.

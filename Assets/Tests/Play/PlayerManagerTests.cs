@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using NUnit.Framework;
-using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEditor.VersionControl;
+﻿using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
 public class PlayerManagerTests
@@ -38,14 +28,14 @@ public class PlayerManagerTests
     [Test]
     public void PlayerManager_ShipSpawns()
     {
-        ShipController ship = Game.Player.SpawnShip();
+        Ship ship = Game.Player.SpawnShip();
         Assert.IsTrue(ship.isActiveAndEnabled);
     }
 
     [Test]
     public void PlayerManager_ShipSpawnsAliveWithHealth()
     {
-        ShipController ship = Game.Player.SpawnShip();
+        Ship ship = Game.Player.SpawnShip();
         Assert.IsTrue(ship.Status.State == ShipState.Alive);
         Assert.IsTrue(ship.Status.Health > 0);
     }
@@ -53,7 +43,7 @@ public class PlayerManagerTests
     [Test]
     public void PlayerManager_ShipSpawnsWithinBounds()
     {
-        ShipController ship = Game.Player.SpawnShip();
+        Ship ship = Game.Player.SpawnShip();
         Assert.IsTrue(Game.Wrap.Contains(ship.Bounds));
     }
 
@@ -62,7 +52,7 @@ public class PlayerManagerTests
     {
         Game.SpawnAsteroids();
 
-        ShipController ship = Game.Player.SpawnShip();
+        Ship ship = Game.Player.SpawnShip();
 
         var safeSize = 6f;
         var safeArea = ship.Bounds;
@@ -77,7 +67,7 @@ public class PlayerManagerTests
     [Test]
     public void PlayerManager_ShipDespawnsOnZeroHealth()
     {
-        ShipController ship = Game.Player.SpawnShip();
+        Ship ship = Game.Player.SpawnShip();
         ship.ApplyDamage(float.MaxValue);
 
         Assert.IsTrue(!ship.isActiveAndEnabled);

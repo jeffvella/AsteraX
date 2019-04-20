@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEditor.UIElements;
 using UnityEngine;
-using Events;
-using UnityEngine.Experimental.XR;
-using UnityEngine.UI;
 
 public enum GameState
 {
     None = 0,
-    MainMenu,
+    Initialized,
     Loading,
-    GameStarted,
+    Loaded,
+    Started,
     GameOver,
 }
 
@@ -26,7 +20,7 @@ public class Game : MonoBehaviour
     [SerializeField]
     private GameData _gameData;
     private static Game _instance;
-    private static GameState _state;
+    private GameState _state;
 
     // The fields throughout the project are used instead of auto-property
     // with private getter for the purpose of exposing members in Unity's debug mode inspector.
@@ -61,10 +55,13 @@ public class Game : MonoBehaviour
     private Game()
     {
         _instance = this;
+        _state = GameState.Initialized;
     }
 
     private void Awake()
     {
+        SetState(GameState.Loading);
+
         _interfaceManager = Instantiate(_gameData.Managers.InterfaceManagerPrefab, parent: transform);
         _effectsManager = Instantiate(_gameData.Managers.EffectsManagerPrefab, parent: transform);
         _wrapManager = Instantiate(_gameData.Managers.WrapManagerPrefab, parent: transform);
@@ -75,9 +72,14 @@ public class Game : MonoBehaviour
         Events.OnSessionUpdated.Register(OnSessionUpdated);
     }
 
+    public void Start()
+    {
+        SetState(GameState.Loaded);
+    }
+
     private void OnSessionUpdated(PlayerManager.PlayerSession session)
     {
-        if (_state == GameState.GameStarted && session.Lives <= 0)
+        if (_state == GameState.Started && session.Lives <= 0)
         {
             EndGame();
         }
@@ -85,29 +87,30 @@ public class Game : MonoBehaviour
 
     public static void StartGame()
     {
-        SetState(GameState.GameStarted);
+        _instance.SetState(GameState.Started);
     }
 
     public static void EndGame()
     {
-        if (_state != GameState.GameStarted)
+        if (_instance._state != GameState.Started)
         {
-            throw new GameExceptions.InvalidStateChangeException<GameState>(_state, GameState.GameOver);
+            throw new GameExceptions.InvalidStateChangeException<GameState>(_instance._state, GameState.GameOver);
         }
-        SetState(GameState.GameOver);
+        _instance.SetState(GameState.GameOver);
     }
 
-    private static void SetState(GameState newState)
+    private void SetState(GameState newState)
     {
         var previous = _state;
 
         switch (newState)
         {
             case GameState.None: break;
-            case GameState.MainMenu: break;
+            case GameState.Initialized: break;
             case GameState.Loading: break;
+            case GameState.Loaded: break;
 
-            case GameState.GameStarted:
+            case GameState.Started:
                 SpawnAsteroids();
                 SpawnPlayer();
                 break;
@@ -138,7 +141,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    private static ShipController SpawnPlayer()
+    private static Ship SpawnPlayer()
     {
         var ship = Player.SpawnShip();
         return ship;

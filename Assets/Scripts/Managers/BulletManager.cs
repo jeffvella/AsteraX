@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
-using UnityEngine.Experimental.VFX;
-using Object = UnityEngine.Object;
+﻿using UnityEngine;
 
 /// <summary>
 /// Responsible for spawning and keeping track of bullets fired from the player ship.

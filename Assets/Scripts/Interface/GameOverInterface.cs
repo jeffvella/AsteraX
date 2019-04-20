@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -8,7 +6,7 @@ using UnityEngine.UI;
 /// and handle interactions such as restarting the game.
 /// </summary>
 [RequireComponent(typeof(Canvas))]
-public class GameOverInterface : MonoBehaviour
+public class GameOverInterface : MonoBehaviour, IGameUserInterface
 {
     public Text ScoreElement;
     public Text AsteroidsDestroyedElement;

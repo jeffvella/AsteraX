@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Events
@@ -10,7 +8,7 @@ namespace Events
 
     public struct ShipStatusArgs
     {
-        public ShipStatusArgs(int shipInstanceId, ShipController.ShipStatus status)
+        public ShipStatusArgs(int shipInstanceId, Ship.ShipStatus status)
         {
             GameObjectId = shipInstanceId;
             CurrentStatus = status;
@@ -18,7 +16,7 @@ namespace Events
 
         public int GameObjectId { get; }
 
-        public ShipController.ShipStatus CurrentStatus { get; }
+        public Ship.ShipStatus CurrentStatus { get; }
     }
 
     [Serializable]
