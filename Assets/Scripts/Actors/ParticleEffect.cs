@@ -121,13 +121,12 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
 
     public void Despawn()
     {
+        // Move particle somewhere save to prevent it being destroyed if parent becomes inactive/destroyed
+        transform.parent = _pool?.ParentContainer;
+
         if (DespawnDelay > 0)
         {
             _isDespawning = true;
-
-            // Prevent particles being destroyed if parent becomes inactive
-            transform.parent = _pool.ParentContainer;
-
             SetEmission(false);
             StartCoroutine(DespawnAfterDelay(DespawnDelay));
         }

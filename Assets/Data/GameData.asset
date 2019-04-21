@@ -23,13 +23,13 @@ MonoBehaviour:
       type: 3}
     InterfaceManagerPrefab: {fileID: 6634068223285659330, guid: 762f8258bdb372145b267b2ce3650068,
       type: 3}
+    LevelManagerPrefab: {fileID: 1000700231888653962, guid: 9b744f8e08ed55145b4adb3a09366a5c,
+      type: 3}
     EffectsManagerPrefab: {fileID: 7107754283172621323, guid: eb4502bdda471474ca07be7d3a7103c4,
       type: 3}
   Events:
-    OnSessionUpdated: {fileID: 11400000, guid: af7457233ddc1f141899203556dd8dfe, type: 2}
-    OnShipDestroyed: {fileID: 11400000, guid: b0439a4a788c3b345a9767c0662fba22, type: 2}
-    OnBulletAsteroidCollision: {fileID: 11400000, guid: be789d1739e9b5e4e8f49cd3a268a9be,
+    SessionUpdated: {fileID: 11400000, guid: af7457233ddc1f141899203556dd8dfe, type: 2}
+    ShipDestroyed: {fileID: 11400000, guid: b0439a4a788c3b345a9767c0662fba22, type: 2}
+    BulletAsteroidCollision: {fileID: 11400000, guid: be789d1739e9b5e4e8f49cd3a268a9be,
       type: 2}
-    OnGameStateChanged: {fileID: 11400000, guid: c5ac3e92c5ae35a42a410fd097153139,
-      type: 2}
-  StartingAsteroids: 8
+    GameStateChanged: {fileID: 11400000, guid: c5ac3e92c5ae35a42a410fd097153139, type: 2}

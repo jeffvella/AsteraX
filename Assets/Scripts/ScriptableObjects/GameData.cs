@@ -1,6 +1,8 @@
 ﻿using System;
+using Assets.Scripts.Managers;
 using Events;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 [Serializable]
 public class ManagerDefinitions
@@ -10,6 +12,7 @@ public class ManagerDefinitions
     public AsteroidManager AsteroidManagerPrefab;
     public WrapManager WrapManagerPrefab;
     public InterfaceManager InterfaceManagerPrefab;
+    public LevelManager LevelManagerPrefab;
     public EffectsManager EffectsManagerPrefab;
 }
 
@@ -27,7 +30,9 @@ public class GameData : ScriptableObject
 {
     public ManagerDefinitions Managers;
     public EventReferences Events;
-    public int StartingAsteroids = 10;
+
+    public bool GodMode;
+    //public int StartingAsteroids = 10;
 }
 
 

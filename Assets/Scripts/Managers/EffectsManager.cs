@@ -43,7 +43,7 @@ public class EffectsManager : MonoBehaviour
         return effect;
     }
 
-    public IEnumerator WaitForEffect(ParticleEffect effect, int timeoutSeconds = 2)
+    public IEnumerator WaitForEffect(ParticleEffect effect, int timeoutSeconds = 10)
     {
         var timeout = DateTime.UtcNow + TimeSpan.FromSeconds(timeoutSeconds);
         while (effect.IsSpawned)
@@ -59,5 +59,10 @@ public class EffectsManager : MonoBehaviour
     private void OnSpawned(ParticleEffect effect)
     {
         effect.Restart();        
+    }
+
+    public void Clear()
+    {
+        _poolsGroup.Clear();
     }
 }

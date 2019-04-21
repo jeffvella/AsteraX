@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f225ae16c01a16c4b880fc3161f66ad8, type: 3}
+  m_Name: LevelData
+  m_EditorClassIdentifier: 
+  Levels:
+  - Id: 1
+    LevelName: Level 1
+    StartingAsteroids: 3
+    AsteroidSplits: 2
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 2
+    LevelName: Level 2
+    StartingAsteroids: 4
+    AsteroidSplits: 2
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 3
+    LevelName: Level 3
+    StartingAsteroids: 3
+    AsteroidSplits: 3
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 4
+    LevelName: Level 4
+    StartingAsteroids: 4
+    AsteroidSplits: 3
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 5
+    LevelName: Level 5
+    StartingAsteroids: 5
+    AsteroidSplits: 3
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 6
+    LevelName: Level 6
+    StartingAsteroids: 3
+    AsteroidSplits: 4
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 7
+    LevelName: Level 7
+    StartingAsteroids: 4
+    AsteroidSplits: 4
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 8
+    LevelName: Level 7
+    StartingAsteroids: 5
+    AsteroidSplits: 4
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 9
+    LevelName: Level 8
+    StartingAsteroids: 6
+    AsteroidSplits: 4
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
+  - Id: 10
+    LevelName: Level 2
+    StartingAsteroids: 3
+    AsteroidSplits: 5
+    Asteroids:
+    - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}

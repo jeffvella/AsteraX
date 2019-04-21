@@ -8,6 +8,8 @@ public class InterfaceData : ScriptableObject
     public GameOverInterface GameOverPrefab;
 
     public MainMenuInterface MainMenuPrefab;
+
+    public LevelCompleteInterface LevelCompletePrefab;
 }
 
 

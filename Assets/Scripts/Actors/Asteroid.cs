@@ -10,6 +10,7 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     private Collider _collider;
     private Rigidbody _rigidBody;
     private bool _isSpawned;
+    private bool _isDestroyed;
 
     public Bounds Bounds => _collider.bounds;
 
@@ -34,6 +35,7 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     public void OnSpawned(IObjectPool<Asteroid> pool)
     {
         _pool = pool;
+        _isDestroyed = false;
     }
 
     public void OnDespawned()
@@ -48,9 +50,14 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
 
     public void OnCollisionEnter(Collision collision)
     {
+        if (_isDestroyed)
+            return;
+
         var bullet = collision.transform.GetComponent<Bullet>();
         if (bullet != null && bullet.IsValid)
         {
+            _isDestroyed = true;
+
             // The bullet needs to be disabled before spawning child asteroids
             // or any children spawned will immediately collide with it.
             bullet.Despawn();

@@ -83,6 +83,9 @@ public class PlayerManager : MonoBehaviour
 
     private void OnShipDestroyed(ShipStateChangedEventInfo info, ShipStatusArgs status)
     {
+        if (Game.State != GameState.Started)
+            return;
+
         _session.Lives--;
 
         if (_session.Lives > 0)
@@ -182,6 +185,11 @@ public class PlayerManager : MonoBehaviour
         }
         result = default;
         return false;
+    }
+
+    public void Clear()
+    {
+        Ship.Despawn();
     }
 }
 

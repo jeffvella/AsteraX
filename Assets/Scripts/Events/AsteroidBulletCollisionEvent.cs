@@ -11,7 +11,7 @@ public class AsteroidBulletCollisionEvent : GameEventBase<(Asteroid Asteroid, Bu
     {
         if (_debugLogging)
         {
-            Debug.Log($"Asteroid {args.Asteroid.name} collided with a bullet {args.Bullet.name}");
+            Debug.Log($"Asteroid {args.Asteroid.name} ({args.Asteroid.Type}) collided with a bullet {args.Bullet.name}");
         }
     }
 

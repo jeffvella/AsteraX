@@ -10,7 +10,7 @@ public enum ShipState
     Awake,
     Spawning,
     Alive,
-    Dying,
+    Destroyed,
     Dead,
 }
 
@@ -87,16 +87,31 @@ public class Ship : MonoBehaviour
 
     private void FireWhenButtonDown()
     {
-        if (CrossPlatformInputManager.GetButtonUp("Fire1"))
+        if (CrossPlatformInputManager.GetButtonUp("Fire1") && !Game.Interface.IsMouseOverInterface)
         {
-            var bullet = Game.Bullets.SpawnBullet(transform.position, TurretRotator.rotation);
-
-            var randomEffectIndex = UnityEngine.Random.Range(0, Game.Bullets.BulletData.BulletEffects.Count);
-            var randomEffectDefinition = Game.Bullets.BulletData.BulletEffects[randomEffectIndex];
-            var bulletEffect = Game.Effects.Spawn(randomEffectDefinition.Prefab, bullet.transform);
-
-            Game.Bullets.LinkDespawn(bullet, bulletEffect);   
+            if (Game.GameData.GodMode)
+            {                
+                const int degrees = 15;              
+                for (int i = 0; i < 360; i = i + degrees)
+                {
+                    var rotation = TurretRotator.rotation * Quaternion.AngleAxis(i, Vector3.up);
+                    FireBullet(rotation);
+                }
+            }
+            else
+            {
+                FireBullet(TurretRotator.rotation);
+            }
         }
+    }
+
+    private void FireBullet(Quaternion direction)
+    {
+        var bullet = Game.Bullets.SpawnBullet(transform.position, direction);
+        var randomEffectIndex = UnityEngine.Random.Range(0, Game.Bullets.BulletData.BulletEffects.Count);
+        var randomEffectDefinition = Game.Bullets.BulletData.BulletEffects[randomEffectIndex];
+        var bulletEffect = Game.Effects.Spawn(randomEffectDefinition.Prefab, bullet.transform);
+        Game.Bullets.LinkDespawn(bullet, bulletEffect);
     }
 
     private void MoveShipFromInput()
@@ -152,7 +167,7 @@ public class Ship : MonoBehaviour
 
         if (_status.Health <= 0)
         {
-            SetState(ShipState.Dying);
+            SetState(ShipState.Destroyed);
         }
     }
 
@@ -176,7 +191,7 @@ public class Ship : MonoBehaviour
                 StartCoroutine(SpawnSequence());
                 break;
 
-            case ShipState.Dying:
+            case ShipState.Destroyed:
                 StartCoroutine(DeathSequence());
                 break;
 
@@ -205,12 +220,29 @@ public class Ship : MonoBehaviour
         var effect = Game.Effects.Spawn(_shipData.DespawnEffect, transform.position);
         yield return Game.Effects.WaitForEffect(effect);
 
-        SetState(ShipState.Dead);
         _shipData.DestroyedEvent.Raise(new ShipStatusArgs(_id, _status));
 
-        Destroy(gameObject);
+        DieImmediately();
         yield return null;
     }
+   
+    public void Despawn()
+    {
+        if (_status.State == ShipState.Alive)
+        {
+            DieImmediately();
+        }
+    }
 
+    private void DieImmediately()
+    {
+        SetState(ShipState.Dead);
+
+        if(_exhaustEmitter.IsSpawned)
+            _exhaustEmitter.Despawn();
+
+        if (gameObject.activeInHierarchy)
+             Destroy(gameObject);
+    }
 }
 

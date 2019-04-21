@@ -142,7 +142,9 @@ public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
     {
         if (asteroid.Type.Size > 1)
         {
-            for (int i = 0; i < asteroid.Type.Children; i++)
+            var childCount = Game.Levels.CurrentLevel.AsteroidSplits;
+
+            for (int i = 0; i < childCount; i++)
             {
                 SpawnAsteroid(asteroid);
             }

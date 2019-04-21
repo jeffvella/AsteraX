@@ -6,26 +6,28 @@ using UnityEngine.UI;
 /// and handle interactions such as restarting the game.
 /// </summary>
 [RequireComponent(typeof(Canvas))]
-public class GameOverInterface : MonoBehaviour, IGameUserInterface
+public class LevelCompleteInterface : MonoBehaviour, IGameUserInterface
 {
+    public Text CurrentLevelNameElement;
     public Text ScoreElement;
     public Text AsteroidsDestroyedElement;
-    public Button TryAgainElement;
+    public Button NextLevelElement;
 
     private void Awake()
     {
-        TryAgainElement.onClick.AddListener(TryAgainClicked);
+        NextLevelElement.onClick.AddListener(NextLevelClicked);
     }
 
-    private void TryAgainClicked()
+    private void NextLevelClicked()
     {
-        Game.Levels.RestartLevel();
+        Game.Levels.NextLevel();
     }
 
     public void Show()
     {
         ScoreElement.text = $"{Game.Player.Session.Score}";
-        AsteroidsDestroyedElement.text = $"{Game.Player.Session.AsteroidsDestroyed}"; ;
+        AsteroidsDestroyedElement.text = $"{Game.Player.Session.AsteroidsDestroyed}";
+        CurrentLevelNameElement.text = Game.Levels.CurrentLevel.LevelName;
         gameObject.SetActive(true);
     }
 

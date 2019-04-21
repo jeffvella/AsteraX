@@ -16,3 +16,5 @@ MonoBehaviour:
     type: 3}
   GameOverPrefab: {fileID: 8244189978543565992, guid: e2cf576b0e4ab8e43b8cfbccbc8bfca7,
     type: 3}
+  MainMenuPrefab: {fileID: 804549240008398730, guid: 29bb9d5c214929e4892f7647d60c92bf,
+    type: 3}

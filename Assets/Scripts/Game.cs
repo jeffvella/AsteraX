@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using Assets.Scripts.Managers;
 using UnityEngine;
 
 public enum GameState
@@ -6,9 +8,10 @@ public enum GameState
     None = 0,
     Initialized,
     Loading,
-    Loaded,
+    GameLoaded,
     Started,
     GameOver,
+    LevelComplete
 }
 
 /// <summary>
@@ -31,6 +34,7 @@ public class Game : MonoBehaviour
     private WrapManager _wrapManager;
     private InterfaceManager _interfaceManager;
     private EffectsManager _effectsManager;
+    private LevelManager _levelManager;
 
     // The public statics to instance are for the convenience of shorter access
     // e.g. Game.Player versus Game.Instance.Player.
@@ -47,9 +51,13 @@ public class Game : MonoBehaviour
 
     public static EffectsManager Effects => _instance._effectsManager;
 
+    public static LevelManager Levels => _instance._levelManager;
+
     public static GameData GameData => _instance._gameData;
 
     public static EventReferences Events => _instance._gameData.Events;
+
+    public static GameState State => _instance._state;
 
 
     private Game()
@@ -68,47 +76,63 @@ public class Game : MonoBehaviour
         _asteroidManager = Instantiate(_gameData.Managers.AsteroidManagerPrefab, parent: transform);
         _playerManager = Instantiate(_gameData.Managers.PlayerManagerPrefab, parent: transform);
         _bulletManager = Instantiate(_gameData.Managers.BulletManagerPrefab, parent: transform);
-        
+        _levelManager = Instantiate(_gameData.Managers.LevelManagerPrefab, parent: transform);
+
         Events.SessionUpdated.Register(OnSessionUpdated);
+        Events.BulletAsteroidCollision.Register(OnAsteroidDestroyed);
     }
 
     public void Start()
     {
-        SetState(GameState.Loaded);
+        SetState(GameState.GameLoaded);
+    }
+
+    public static void StartGame()
+    {
+        Levels.FirstLevel();
     }
 
     private void OnSessionUpdated(PlayerManager.PlayerSession session)
     {
         if (_state == GameState.Started && session.Lives <= 0)
         {
-            EndGame();
+            StartCoroutine(GameOverSequence());
         }
     }
-
-    public static void StartGame()
+    private IEnumerator GameOverSequence()
     {
-        _instance.SetState(GameState.Started);
+        yield return new WaitForSeconds(1);
+        SetState(GameState.GameOver);
     }
 
-    public static void EndGame()
+    private void OnAsteroidDestroyed((Asteroid Asteroid, Bullet Bullet) obj)
     {
-        if (_instance._state != GameState.Started)
+        if (_state == GameState.Started && Asteroids.ActiveCount == 0)
         {
-            throw new GameExceptions.InvalidStateChangeException<GameState>(_instance._state, GameState.GameOver);
+            StartCoroutine(LevelCompleteSequence());
         }
-        _instance.SetState(GameState.GameOver);
     }
 
-    private void SetState(GameState newState)
+    private IEnumerator LevelCompleteSequence()
     {
-        var previous = _state;
+        yield return new WaitForSeconds(1);
+        SetState(GameState.LevelComplete);
+    }
+
+    public static void SetState(GameState newState)
+    {
+        var previous = _instance._state;
 
         switch (newState)
         {
             case GameState.None: break;
             case GameState.Initialized: break;
             case GameState.Loading: break;
-            case GameState.Loaded: break;
+            case GameState.GameLoaded: break;
+
+            case GameState.LevelComplete:
+                ResetGame();
+                break;
 
             case GameState.Started:
                 SpawnAsteroids();
@@ -123,19 +147,21 @@ public class Game : MonoBehaviour
                 throw new GameExceptions.InvalidStateChangeException<GameState>(previous, newState);
         }
 
-        _state = newState;
+        _instance._state = newState;
         Events.GameStateChanged.Raise((previous, newState));
     }
 
-    private static void ResetGame()
+    public static void ResetGame()
     {
+        Player.Clear();
         Asteroids.Clear();
         Bullets.Clear();
+        Effects.Clear();
     }
 
     public static void SpawnAsteroids()
     {
-        for (int i = 0; i < GameData.StartingAsteroids; i++)
+        for (int i = 0; i < Levels.CurrentLevel.StartingAsteroids; i++)
         {
             Asteroids.SpawnAsteroid();
         }

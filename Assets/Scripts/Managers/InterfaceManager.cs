@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityStandardAssets.CrossPlatformInput;
 
 /// <summary>
 /// The interface manager monitors game events and controls how to represent that information in the interface.
@@ -13,6 +14,7 @@ public class InterfaceManager : MonoBehaviour
     private HudInterface _hud;
     private GameOverInterface _gameOver;
     private MainMenuInterface _mainMenu;
+    private LevelCompleteInterface _levelComplete;
 
     public void Awake()
     {
@@ -27,22 +29,24 @@ public class InterfaceManager : MonoBehaviour
         _mainMenu = Instantiate(_interfaceData.MainMenuPrefab, parent: transform);
         _mainMenu.gameObject.SetActive(false);
 
+        _levelComplete = Instantiate(_interfaceData.LevelCompletePrefab, parent: transform);
+        _levelComplete.gameObject.SetActive(false);
+
         Game.Events.SessionUpdated.Register(OnSessionUpdated);
         Game.Events.BulletAsteroidCollision.Register(OnAsteroidCollision);
         Game.Events.GameStateChanged.Register(OnGameStateChanged);
-    }
-
-    public void Start()
-    {
-
     }
 
     private void OnGameStateChanged((GameState previous, GameState current) arg)
     {
         switch (arg.current)
         {
-            case GameState.Loaded:
+            case GameState.GameLoaded:
                 OnGameLoaded();
+                break;
+
+            case GameState.LevelComplete:
+                OnLevelComplete();
                 break;
 
             case GameState.Started:
@@ -55,15 +59,27 @@ public class InterfaceManager : MonoBehaviour
         }
     }
 
-    private void OnGameLoaded()
+    private void OnLevelComplete()
     {
         _hud.Hide();
+        _gameOver.Hide();
+        _mainMenu.Hide();
+        _levelComplete.Show();
+    }
+
+    public bool IsMouseOverInterface => EventSystem.current.IsPointerOverGameObject();
+
+    private void OnGameLoaded()
+    {        
+        _hud.Hide();
+        _levelComplete.Hide();
         _gameOver.Hide();
         _mainMenu.Show();
     }
 
     private void OnGameStarted()
     {
+        _levelComplete.Hide();
         _gameOver.Hide();
         _mainMenu.Hide();
         _hud.Show();
@@ -71,6 +87,7 @@ public class InterfaceManager : MonoBehaviour
 
     private void OnGameOver()
     {
+        _levelComplete.Hide();
         _mainMenu.Hide();
         _hud.Hide();
         _gameOver.Show();
