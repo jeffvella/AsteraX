@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TimeManager
 {
+    // Note: User interface animation should be set to unscaled time if it needs to work while paused.
+
     public bool IsPaused => _isPaused;
     private bool _isPaused;
 

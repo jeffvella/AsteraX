@@ -51,7 +51,7 @@ public class EffectsManager : MonoBehaviour
             if (DateTime.UtcNow > timeout)
                 break;
 
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.1f);
         }
         yield return null;
     }
