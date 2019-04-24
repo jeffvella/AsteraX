@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Assets.Scripts.Managers;
+using UnityEditorInternal;
 using UnityEngine;
 
 public enum GameState
@@ -9,9 +10,9 @@ public enum GameState
     Initialized,
     Loading,
     GameLoaded,
-    Started,
+    LevelStarted,
     GameOver,
-    LevelComplete
+    LevelComplete,
 }
 
 /// <summary>
@@ -35,6 +36,7 @@ public class Game : MonoBehaviour
     private InterfaceManager _interfaceManager;
     private EffectsManager _effectsManager;
     private LevelManager _levelManager;
+    private TimeManager _timeManager;
 
     // The public statics to instance are for the convenience of shorter access
     // e.g. Game.Player versus Game.Instance.Player.
@@ -59,6 +61,8 @@ public class Game : MonoBehaviour
 
     public static GameState State => _instance._state;
 
+    public static TimeManager Time => _instance._timeManager;
+
 
     private Game()
     {
@@ -77,6 +81,7 @@ public class Game : MonoBehaviour
         _playerManager = Instantiate(_gameData.Managers.PlayerManagerPrefab, parent: transform);
         _bulletManager = Instantiate(_gameData.Managers.BulletManagerPrefab, parent: transform);
         _levelManager = Instantiate(_gameData.Managers.LevelManagerPrefab, parent: transform);
+        _timeManager = new TimeManager();
 
         Events.SessionUpdated.Register(OnSessionUpdated);
         Events.BulletAsteroidCollision.Register(OnAsteroidDestroyed);
@@ -94,7 +99,7 @@ public class Game : MonoBehaviour
 
     private void OnSessionUpdated(PlayerManager.PlayerSession session)
     {
-        if (_state == GameState.Started && session.Lives <= 0)
+        if (_state == GameState.LevelStarted && session.Lives <= 0)
         {
             StartCoroutine(GameOverSequence());
         }
@@ -107,7 +112,7 @@ public class Game : MonoBehaviour
 
     private void OnAsteroidDestroyed((Asteroid Asteroid, Bullet Bullet) obj)
     {
-        if (_state == GameState.Started && Asteroids.ActiveCount == 0)
+        if (_state == GameState.LevelStarted && Asteroids.ActiveCount == 0)
         {
             StartCoroutine(LevelCompleteSequence());
         }
@@ -134,7 +139,7 @@ public class Game : MonoBehaviour
                 ResetGame();
                 break;
 
-            case GameState.Started:
+            case GameState.LevelStarted:
                 SpawnAsteroids();
                 SpawnPlayer();
                 break;

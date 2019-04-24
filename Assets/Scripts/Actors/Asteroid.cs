@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
 {
     public float MovementSpeed;
@@ -16,6 +17,8 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
 
     void Update()
     {
+        if (Game.Time.IsPaused)
+             return;
 
         //transform.position += MoveDirection * MovementSpeed * Time.deltaTime;
         //transform.rotation = AngularVelocity * transform.rotation;

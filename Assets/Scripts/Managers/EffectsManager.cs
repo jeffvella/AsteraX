@@ -46,7 +46,7 @@ public class EffectsManager : MonoBehaviour
     public IEnumerator WaitForEffect(ParticleEffect effect, int timeoutSeconds = 10)
     {
         var timeout = DateTime.UtcNow + TimeSpan.FromSeconds(timeoutSeconds);
-        while (effect.IsSpawned)
+        while (effect.IsSpawned && effect.IsPlaying)
         {
             if (DateTime.UtcNow > timeout)
                 break;

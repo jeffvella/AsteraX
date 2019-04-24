@@ -12,8 +12,11 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
     private bool _isEmissionPaused;
     private bool _isDespawning;
     private bool _isEmitting;
-    private bool _isActive;
+    private bool _isStarted;
     private bool _isPlayOnAwake;
+    private int _restartCount;
+    private bool _isPaused;
+    private bool _prePauseState;
 
     private void Awake()
     {
@@ -22,7 +25,7 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         {
             _systems.AddRange(childSystems);
         }
-        _isActive = true;
+        _isStarted = true;
         _isPlayOnAwake = IsPlayOnAwake();
     }
 
@@ -65,11 +68,12 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
             system.Clear();
             SetEmission(system, true);
         }
-        _isActive = false;
+        _isStarted = false;
     }
 
     public void Play()
     {
+        _isPaused = false;
         for (int i = 0; i < _systems.Count; i++)
         {
             _systems[i].Play();   
@@ -86,13 +90,23 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
 
     private void Pause()
     {
+        _isPaused = true;
         for (int i = 0; i < _systems.Count; i++)
         {
-            _systems[i].Pause();
+            var main = _systems[i].main;
+            main.simulationSpeed = 0;
         }
     }
 
-    private int _restartCount;
+    private void Unpause()
+    {
+        for (int i = 0; i < _systems.Count; i++)
+        {
+            var main = _systems[i].main;
+            main.simulationSpeed = 1;
+        }
+        _isPaused = false;
+    }
 
     public void Restart()
     {
@@ -121,7 +135,7 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
 
     public void Despawn()
     {
-        // Move particle somewhere save to prevent it being destroyed if parent becomes inactive/destroyed
+        // Move particle somewhere safe to prevent it being destroyed if parent becomes inactive/destroyed
         transform.parent = _pool?.ParentContainer;
 
         if (DespawnDelay > 0)
@@ -136,7 +150,24 @@ public class ParticleEffect : MonoBehaviour, IPoolable<ParticleEffect>
         }
     }
 
-    public void LateUpdate()
+    private void Update()
+    {
+        UpdateGameTimePause();
+    }
+
+    private void UpdateGameTimePause()
+    {
+        if (Game.Time.IsPaused)
+        {
+            Pause();
+        }
+        else if (_isPaused)
+        {
+            Unpause();
+        }
+    }
+
+    private void LateUpdate()
     {
         WrappingEffectFix();
     }

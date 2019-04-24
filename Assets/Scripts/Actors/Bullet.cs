@@ -17,6 +17,9 @@ public class Bullet : MonoBehaviour, IPoolable<Bullet>
 
     void Update()
     {
+        if (Game.Time.IsPaused)
+            return;
+
         transform.position += transform.forward * Speed * Time.deltaTime;
     }
 

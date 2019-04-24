@@ -39,7 +39,7 @@ public class PlayerManager : MonoBehaviour
     {
         switch (obj.Current)
         {
-            case GameState.Started:
+            case GameState.LevelStarted:
                 InitializePlayerSession();
                 break;
         }
@@ -83,7 +83,7 @@ public class PlayerManager : MonoBehaviour
 
     private void OnShipDestroyed(ShipStateChangedEventInfo info, ShipStatusArgs status)
     {
-        if (Game.State != GameState.Started)
+        if (Game.State != GameState.LevelStarted)
             return;
 
         _session.Lives--;

@@ -10,6 +10,9 @@ public class InterfaceData : ScriptableObject
     public MainMenuInterface MainMenuPrefab;
 
     public LevelCompleteInterface LevelCompletePrefab;
+
+    public LevelStartedInterface LevelStartedPrefab;
+
 }
 
 

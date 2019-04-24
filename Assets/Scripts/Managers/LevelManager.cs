@@ -27,7 +27,7 @@ namespace Assets.Scripts.Managers
         {
             _currentLevelIndex = level;
             _currentLevel = LevelData.Levels[level];
-            Game.SetState(GameState.Started);
+            Game.SetState(GameState.LevelStarted);
         }
 
 

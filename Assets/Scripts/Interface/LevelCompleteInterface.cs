@@ -29,6 +29,8 @@ public class LevelCompleteInterface : MonoBehaviour, IGameUserInterface
         AsteroidsDestroyedElement.text = $"{Game.Player.Session.AsteroidsDestroyed}";
         CurrentLevelNameElement.text = Game.Levels.CurrentLevel.LevelName;
         gameObject.SetActive(true);
+
+        Game.ResetGame();
     }
 
     public void Hide()

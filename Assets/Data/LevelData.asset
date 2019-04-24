@@ -68,7 +68,7 @@ MonoBehaviour:
     Asteroids:
     - {fileID: 11400000, guid: d70e36fd351583b4b97db799cca3b661, type: 2}
   - Id: 10
-    LevelName: Level 2
+    LevelName: Level 10
     StartingAsteroids: 3
     AsteroidSplits: 5
     Asteroids:

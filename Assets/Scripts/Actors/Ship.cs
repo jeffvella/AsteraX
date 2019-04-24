@@ -79,6 +79,9 @@ public class Ship : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (Game.Time.IsPaused)
+            return;
+
         if (_status.State == ShipState.Alive)
         {
             MoveShipFromInput();

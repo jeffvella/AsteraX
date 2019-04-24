@@ -45,6 +45,11 @@ public class HudInterface : MonoBehaviour, IGameUserInterface
         gameObject.SetActive(false);
     }
 
+    public void TogglePause(bool value)
+    {
+        Game.Time.Toggle();   
+    }
+
     public bool IsVisible => gameObject.activeInHierarchy;
 }
 

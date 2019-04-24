@@ -15,6 +15,7 @@ public class InterfaceManager : MonoBehaviour
     private GameOverInterface _gameOver;
     private MainMenuInterface _mainMenu;
     private LevelCompleteInterface _levelComplete;
+    private LevelStartedInterface _levelStarted;
 
     public void Awake()
     {
@@ -32,10 +33,15 @@ public class InterfaceManager : MonoBehaviour
         _levelComplete = Instantiate(_interfaceData.LevelCompletePrefab, parent: transform);
         _levelComplete.gameObject.SetActive(false);
 
+        _levelStarted = Instantiate(_interfaceData.LevelStartedPrefab, parent: transform);
+        _levelStarted.gameObject.SetActive(false);
+
         Game.Events.SessionUpdated.Register(OnSessionUpdated);
         Game.Events.BulletAsteroidCollision.Register(OnAsteroidCollision);
         Game.Events.GameStateChanged.Register(OnGameStateChanged);
     }
+
+    public bool IsMouseOverInterface => EventSystem.current.IsPointerOverGameObject();
 
     private void OnGameStateChanged((GameState previous, GameState current) arg)
     {
@@ -49,7 +55,7 @@ public class InterfaceManager : MonoBehaviour
                 OnLevelComplete();
                 break;
 
-            case GameState.Started:
+            case GameState.LevelStarted:
                 OnGameStarted();
                 break;
 
@@ -65,9 +71,10 @@ public class InterfaceManager : MonoBehaviour
         _gameOver.Hide();
         _mainMenu.Hide();
         _levelComplete.Show();
+        _levelStarted.Hide();
     }
 
-    public bool IsMouseOverInterface => EventSystem.current.IsPointerOverGameObject();
+
 
     private void OnGameLoaded()
     {        
@@ -75,6 +82,7 @@ public class InterfaceManager : MonoBehaviour
         _levelComplete.Hide();
         _gameOver.Hide();
         _mainMenu.Show();
+        _levelStarted.Hide();
     }
 
     private void OnGameStarted()
@@ -83,6 +91,7 @@ public class InterfaceManager : MonoBehaviour
         _gameOver.Hide();
         _mainMenu.Hide();
         _hud.Show();
+        _levelStarted.Show();
     }
 
     private void OnGameOver()
@@ -91,6 +100,7 @@ public class InterfaceManager : MonoBehaviour
         _mainMenu.Hide();
         _hud.Hide();
         _gameOver.Show();
+        _levelStarted.Hide();
     }
 
     private void OnAsteroidCollision((Asteroid Asteroid, Bullet Bullet) args)
