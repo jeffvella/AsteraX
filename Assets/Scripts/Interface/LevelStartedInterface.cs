@@ -57,7 +57,7 @@ public static class PlayableDirectorExtensions
 {
     public static void Restart(this PlayableDirector director)
     {
-        director.time = 0;
+        director.time = director.initialTime;
         director.Play();
     }
 }
