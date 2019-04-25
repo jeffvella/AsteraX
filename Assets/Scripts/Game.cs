@@ -36,7 +36,8 @@ public class Game : MonoBehaviour
     private InterfaceManager _interfaceManager;
     private EffectsManager _effectsManager;
     private LevelManager _levelManager;
-    private TimeManager _timeManager;
+    private AchievementManager _achievementManager;
+    private TimeManager _timeManager;    
 
     // The public statics to instance are for the convenience of shorter access
     // e.g. Game.Player versus Game.Instance.Player.
@@ -54,6 +55,8 @@ public class Game : MonoBehaviour
     public static EffectsManager Effects => _instance._effectsManager;
 
     public static LevelManager Levels => _instance._levelManager;
+
+    public static AchievementManager AchievementManager => _instance._achievementManager;
 
     public static GameData GameData => _instance._gameData;
 
@@ -81,6 +84,7 @@ public class Game : MonoBehaviour
         _playerManager = Instantiate(_gameData.Managers.PlayerManagerPrefab, parent: transform);
         _bulletManager = Instantiate(_gameData.Managers.BulletManagerPrefab, parent: transform);
         _levelManager = Instantiate(_gameData.Managers.LevelManagerPrefab, parent: transform);
+        _achievementManager = Instantiate(_gameData.Managers.AchievementManagerPrefab, parent: transform);
         _timeManager = new TimeManager();
 
         Events.SessionUpdated.Register(OnSessionUpdated);
@@ -168,7 +172,7 @@ public class Game : MonoBehaviour
     {
         for (int i = 0; i < Levels.CurrentLevel.StartingAsteroids; i++)
         {
-            Asteroids.SpawnAsteroid();
+            Asteroids.SpawnAsteroid(3,3);
         }
     }
 

@@ -22,3 +22,5 @@ MonoBehaviour:
     type: 3}
   LevelStartedPrefab: {fileID: 5106517318039627050, guid: dd41d490911d9a049b2734afd19997bf,
     type: 3}
+  AchievementsPrefab: {fileID: 3474815141242390709, guid: 76409ff4140453a49b8dc1c86322b64a,
+    type: 3}

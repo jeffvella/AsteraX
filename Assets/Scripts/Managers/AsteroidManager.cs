@@ -42,7 +42,7 @@ public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
         Game.Effects.Spawn(randomEffect.Prefab, asteroid.transform.position, Quaternion.identity, scale);
     }
 
-    public Asteroid SpawnAsteroid(int maxSize = int.MaxValue, Vector3 position = default, Vector3 velocity = default, Quaternion rotation = default)
+    public Asteroid SpawnAsteroid(int minSize = 1, int maxSize = int.MaxValue, Vector3 position = default, Vector3 velocity = default, Quaternion rotation = default)
     {
         var prefab = GetRandomAsteroidPrefab();
         var pool = GetPoolForPrefab(prefab);
@@ -51,7 +51,7 @@ public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
         var rot = UnityEngine.Random.rotation;
         var asteroid = pool.Spawn(pos, rot);
 
-        var type = GetRandomAsteroidType(maxSize);
+        var type = GetRandomAsteroidType(minSize, maxSize);
         asteroid.Type = type;
         asteroid.transform.localScale = Vector3.one * type.Size;
         asteroid.MovementSpeed = GetAsteroidMovementSpeed() / type.Size;
@@ -92,9 +92,9 @@ public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
         return position;
     }
 
-    private AsteroidType GetRandomAsteroidType(int maxSize)
+    private AsteroidType GetRandomAsteroidType(int minSize, int maxSize)
     {
-        AsteroidType[] types = AsteroidData.AsteroidTypes.Where(t => t.Size <= maxSize).ToArray();
+        AsteroidType[] types = AsteroidData.AsteroidTypes.Where(t => t.Size >= minSize && t.Size <= maxSize).ToArray();
         var randomIndex = UnityEngine.Random.Range(0, types.Length);
         if (randomIndex < 0 || randomIndex >= types.Length)
         {
@@ -106,7 +106,9 @@ public class AsteroidManager : MonoBehaviour, IEnumerable<Asteroid>
 
     public Asteroid SpawnAsteroid(Asteroid parent)
     {
-        return SpawnAsteroid(parent.Type.Size-1, parent.transform.position, parent.MoveDirection);
+        var childSize = parent.Type.Size - 1;
+
+        return SpawnAsteroid(childSize, childSize, parent.transform.position, parent.MoveDirection);
     }
 
     private float GetAsteroidMovementSpeed()

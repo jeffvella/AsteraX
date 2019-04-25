@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.Events;
 using Assets.Scripts.Managers;
 using Events;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class ManagerDefinitions
     public InterfaceManager InterfaceManagerPrefab;
     public LevelManager LevelManagerPrefab;
     public EffectsManager EffectsManagerPrefab;
+    public AchievementManager AchievementManagerPrefab;
 }
 
 [Serializable]
@@ -23,6 +25,8 @@ public class EventReferences
     public ShipStateChangedEvent ShipDestroyed;
     public AsteroidBulletCollisionEvent BulletAsteroidCollision;
     public GameStateChangedEvent GameStateChanged;
+    public AchievementAttainedEvent AchievementAttained;
+    public BulletFiredEvent BulletFired;
 }
 
 [CreateAssetMenu]

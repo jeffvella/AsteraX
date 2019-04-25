@@ -14,7 +14,7 @@ public enum ShipState
     Dead,
 }
 
-public class Ship : MonoBehaviour
+public class Ship : MonoBehaviour, IEdgeWrappable
 {
 
     [Serializable]
@@ -37,6 +37,8 @@ public class Ship : MonoBehaviour
     private Rigidbody _rigidBody;
     private ParticleEffect _exhaustEmitter;
     private ShipData _shipData;
+
+    bool IEdgeWrappable.HasWrapped { get; set; }
 
     public bool IsStateTransitioning { get; private set; }
 
@@ -247,5 +249,6 @@ public class Ship : MonoBehaviour
         if (gameObject.activeInHierarchy)
              Destroy(gameObject);
     }
+
 }
 

@@ -17,6 +17,8 @@ namespace Assets.Scripts.Managers
         private LevelDefinition _currentLevel;
         private int _currentLevelIndex;
 
+        public int CurrentLevelNumber => _currentLevelIndex + 1;
+
         public void NextLevel() => LoadLevel(++_currentLevelIndex);
 
         public void RestartLevel() => LoadLevel(_currentLevelIndex);

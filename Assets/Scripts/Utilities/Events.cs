@@ -109,7 +109,7 @@ namespace Events
     /// A <see cref="ScriptableObject"/> based event that can notify event listeners, with one argument.
     /// </summary>
     /// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
-    public class GameEventBase<TArgs> : GameEventBaseScriptableObject where TArgs : struct
+    public class GameEventBase<TArgs> : GameEventBaseScriptableObject //where TArgs : struct
 {
         private readonly List<IEventObserver<TArgs>> _observers = new List<IEventObserver<TArgs>>();
 

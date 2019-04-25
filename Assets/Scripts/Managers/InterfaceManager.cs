@@ -16,6 +16,7 @@ public class InterfaceManager : MonoBehaviour
     private MainMenuInterface _mainMenu;
     private LevelCompleteInterface _levelComplete;
     private LevelStartedInterface _levelStarted;
+    private AchievementsInterface _achievements;
 
     public void Awake()
     {
@@ -36,9 +37,29 @@ public class InterfaceManager : MonoBehaviour
         _levelStarted = Instantiate(_interfaceData.LevelStartedPrefab, parent: transform);
         _levelStarted.gameObject.SetActive(false);
 
+        _achievements = Instantiate(_interfaceData.AchievementsPrefab, parent: transform);
+        _achievements.gameObject.SetActive(true);
+
         Game.Events.SessionUpdated.Register(OnSessionUpdated);
         Game.Events.BulletAsteroidCollision.Register(OnAsteroidCollision);
         Game.Events.GameStateChanged.Register(OnGameStateChanged);
+        Game.Events.AchievementAttained.Register(OnAchievementAttained);
+    }
+
+    private void OnAchievementAttained(AchievementDefinition achievement)
+    {
+        _achievements.DisplayAchievement(achievement);        
+    }
+
+    private void OnAsteroidCollision((Asteroid Asteroid, Bullet Bullet) args)
+    {
+        _hud.UpdateAsteroidsRemaining(Game.Asteroids.ActiveCount);
+    }
+
+    private void OnSessionUpdated(PlayerManager.PlayerSession session)
+    {
+        _hud.UpdateLives(session.Lives);
+        _hud.UpdateScore(session.Score);
     }
 
     public bool IsMouseOverInterface => EventSystem.current.IsPointerOverGameObject();
@@ -103,16 +124,7 @@ public class InterfaceManager : MonoBehaviour
         _levelStarted.Hide();
     }
 
-    private void OnAsteroidCollision((Asteroid Asteroid, Bullet Bullet) args)
-    {
-        _hud.UpdateAsteroidsRemaining(Game.Asteroids.ActiveCount);
-    }
 
-    private void OnSessionUpdated(PlayerManager.PlayerSession session)
-    {        
-        _hud.UpdateLives(session.Lives);
-        _hud.UpdateScore(session.Score);
-    }
 }
 
 

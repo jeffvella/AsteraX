@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour, IPoolable<Bullet>
+public class Bullet : MonoBehaviour, IPoolable<Bullet>, IEdgeWrappable
 {
     public float Speed { get; set; }
 
     public float Duration { get; set; }
+
+    public bool HasWrapped { get; set; }
 
     private IObjectPool<Bullet> _pool;
 
@@ -27,6 +29,8 @@ public class Bullet : MonoBehaviour, IPoolable<Bullet>
     {
         _pool = pool;
         StartCoroutine(SelfDestructAfterDuration());
+
+        Game.Events.BulletFired.Raise(this);
     }
 
     public void OnDespawned()
@@ -40,4 +44,10 @@ public class Bullet : MonoBehaviour, IPoolable<Bullet>
     {        
         _pool?.Despawn(this);
     }
+
+    public override string ToString()
+    {
+        return base.ToString();
+    }
 }
+

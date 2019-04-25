@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
+public class Asteroid : MonoBehaviour, IPoolable<Asteroid>, IEdgeWrappable
 {
     public float MovementSpeed;
     public Vector3 MoveDirection;
@@ -14,6 +14,8 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
     private bool _isDestroyed;
 
     public Bounds Bounds => _collider.bounds;
+
+    bool IEdgeWrappable.HasWrapped { get; set; }
 
     void Update()
     {
@@ -69,4 +71,6 @@ public class Asteroid : MonoBehaviour, IPoolable<Asteroid>
             Game.Events.BulletAsteroidCollision.Raise((this, bullet));
         }
     }
+
+
 }

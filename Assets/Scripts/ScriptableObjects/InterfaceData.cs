@@ -13,7 +13,10 @@ public class InterfaceData : ScriptableObject
 
     public LevelStartedInterface LevelStartedPrefab;
 
+    public AchievementsInterface AchievementsPrefab;
+
 }
+
 
 
 
