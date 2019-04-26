@@ -1,5 +1,5 @@
 # AsteraX
-This is my version of the first project Unity's certification course on Coursera
+This is my version of the first project from Unity's certification course on Coursera
 
 ** It is currently a work in progress **
 
